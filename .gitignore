@@ -1,0 +1,43 @@
+node_modules/
+.pnpm-store/
+.turbo/
+.DS_Store
+.idea/
+.vscode/
+
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+dist/
+build/
+coverage/
+.next/
+.cache/
+tmp/
+temp/
+out/
+
+*.log
+pnpm-debug.log*
+npm-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Test artifacts
+playwright-report/
+test-results/
+.nyc_output/
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# Docker
+.docker/
+
+# Local-only notes
+.me/
