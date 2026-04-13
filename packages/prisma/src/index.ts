@@ -1,3 +1,3 @@
 export function getDatabaseProvider() {
-  return "supabase-postgres"
+    return 'supabase-postgres';
 }

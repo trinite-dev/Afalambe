@@ -1,3 +1,3 @@
 export function getEmailProvider() {
-  return "resend"
+    return 'resend';
 }

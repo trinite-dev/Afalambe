@@ -1,15 +1,8 @@
-
-
-
-
 ### Afalambè
 
 Afalambè is being built to let people submit claims (including in Fula/Peul), return AI-verified answers when possible, and queue unmatched items for human review. Delivery includes a web experience and campaign links (for example from WhatsApp).
 
-  
 **[Website »](https://afalambe.org)**
-
-
 
 ## About the Project
 
@@ -52,32 +45,42 @@ docker --version
 ### Setup
 
 1. Clone the repository (use your private remote URL)
-  ```sh
-   git clone <PRIVATE_REPO_URL>
-   cd Afalambe
-  ```
+
+```sh
+ git clone <PRIVATE_REPO_URL>
+ cd Afalambe
+```
+
 2. Install dependencies
-  ```sh
-   pnpm install
-  ```
+
+```sh
+ pnpm install
+```
+
 3. Configure environment files
-  - Copy example files:
+
+- Copy example files:
     - `apps/web/.env.example`
     - `apps/api/.env.example`
     - `packages/emails/.env.example`
     - `packages/prisma/.env.example`
-  - Fill values using `docs/env/README.md`.
+- Fill values using `docs/env/README.md`.
+
 4. Run env checks
-  ```sh
-   pnpm env-check:web
-   pnpm env-check:api
-   pnpm env-check:emails
-  ```
+
+```sh
+ pnpm env-check:web
+ pnpm env-check:api
+ pnpm env-check:emails
+```
+
 5. Start development
-  ```sh
-   pnpm dev
-  ```
-   Focused workflows:
+
+```sh
+ pnpm dev
+```
+
+Focused workflows:
 
 ## Project Structure
 
@@ -97,6 +100,7 @@ Afalambe/
 │   ├── eslint/               # @afalambe/configs-eslint
 │   └── typescript/           # @afalambe/configs-typescript
 ├── docs/
+├── specs/                    # Spec-driven product + feature specs (see specs/README.md)
 ├── package.json
 ├── pnpm-workspace.yaml
 └── turbo.json
@@ -128,10 +132,10 @@ Use local workspace packages:
 
 ```json
 {
-  "dependencies": {
-    "@afalambe/ui": "workspace:*",
-    "@afalambe/trpc": "workspace:*"
-  }
+    "dependencies": {
+        "@afalambe/ui": "workspace:*",
+        "@afalambe/trpc": "workspace:*"
+    }
 }
 ```
 
@@ -256,15 +260,19 @@ pnpm changeset status
 ## Contributing
 
 1. Clone from your private remote and create a branch:
-  - `@username/feature-your-task`
-  - `@username/fix-your-bug-fix`
+
+- `@username/feature-your-task`
+- `@username/fix-your-bug-fix`
+
 2. Install dependencies: `pnpm install`
 3. Run checks before PR:
-  ```sh
-   pnpm lint
-   pnpm typecheck
-   pnpm test
-  ```
+
+```sh
+ pnpm lint
+ pnpm typecheck
+ pnpm test
+```
+
 4. Open PR with context and test notes.
 
 Conventional commit types:

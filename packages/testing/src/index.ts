@@ -1,3 +1,3 @@
 export function createTestContext() {
-  return { environment: "test" }
+    return { environment: 'test' };
 }

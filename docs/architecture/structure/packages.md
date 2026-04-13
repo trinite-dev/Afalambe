@@ -1,4 +1,4 @@
-# packages/* Structure
+# packages/\* Structure
 
 Canonical package roles:
 

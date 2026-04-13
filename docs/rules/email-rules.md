@@ -1,5 +1,12 @@
 # Email Rules (Resend)
 
+## References
+
+- Agent skill (Resend API, Node SDK, React Email, webhooks): `.agents/skills/resend/SKILL.md`
+- Resend documentation index for agents: [https://resend.com/docs/llms.txt](https://resend.com/docs/llms.txt)
+- Resend introduction: [https://resend.com/docs/introduction](https://resend.com/docs/introduction)
+- React Email docs (upstream): [https://react.email](https://react.email) and [react-email `apps/docs` on GitHub](https://github.com/resend/react-email/tree/canary/apps/docs)
+
 ## Scope
 
 Applies to transactional and campaign emails sent by this project.

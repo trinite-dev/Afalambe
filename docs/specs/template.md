@@ -37,7 +37,7 @@ Describe what will be built in this iteration.
 ## Risks and mitigations
 
 - Risk:
-  - Mitigation:
+    - Mitigation:
 
 ## Rollout plan
 

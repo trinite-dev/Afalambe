@@ -1,0 +1,57 @@
+/*
+  Afalambè — marketing / landing page kit (light surface, high contrast).
+  Scoped with [data-ui-kit="landing"]. Pair with chat kit on /chat only.
+  Map to Figma: ChatGPT UI Kit — landing frame (e.g. node 804-273); update tokens when measured.
+*/
+
+[data-ui-kit='landing'] {
+    --lp-bg: #fafafa;
+    --lp-bg-elevated: #ffffff;
+    --lp-fg: #0a0a0a;
+    --lp-fg-muted: #525252;
+    --lp-fg-subtle: #737373;
+    --lp-border: #e5e5e5;
+    --lp-border-strong: #d4d4d4;
+    --lp-accent: #10a37f;
+    --lp-accent-hover: #0d8f6e;
+    --lp-accent-fg: #ffffff;
+    --lp-ring: rgb(16 163 127 / 0.35);
+    --lp-hero-gradient: linear-gradient(180deg, #f4f4f5 0%, #fafafa 45%, #fafafa 100%);
+    --lp-radius-sm: 8px;
+    --lp-radius-md: 12px;
+    --lp-radius-lg: 16px;
+    --lp-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+    --lp-shadow-md: 0 4px 24px rgb(0 0 0 / 0.06);
+    --lp-cta-gradient: linear-gradient(180deg, #212730 0%, #3d3d3d 100%);
+    --lp-cta-gradient-hover: linear-gradient(180deg, #2a3140 0%, #4a4a4a 100%);
+    --lp-max-width: 72rem;
+}
+
+[data-ui-kit='landing'] {
+    background: var(--lp-hero-gradient);
+    color: var(--lp-fg);
+    font-family: var(--font-sans);
+}
+
+[data-ui-kit='landing'] details[open] .landing-faq-chevron {
+    transform: rotate(180deg);
+}
+
+.dark [data-ui-kit='landing'] {
+    --lp-bg: #0a0a0a;
+    --lp-bg-elevated: #141414;
+    --lp-fg: #fafafa;
+    --lp-fg-muted: #a3a3a3;
+    --lp-fg-subtle: #737373;
+    --lp-border: #262626;
+    --lp-border-strong: #404040;
+    --lp-accent: #10a37f;
+    --lp-accent-hover: #12b88a;
+    --lp-accent-fg: #ffffff;
+    --lp-ring: rgb(16 163 127 / 0.45);
+    --lp-hero-gradient: linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 45%, #0a0a0a 100%);
+    --lp-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --lp-shadow-md: 0 4px 24px rgb(0 0 0 / 0.35);
+    --lp-cta-gradient: linear-gradient(180deg, #d4d4d4 0%, #a3a3a3 100%);
+    --lp-cta-gradient-hover: linear-gradient(180deg, #e5e5e5 0%, #b3b3b3 100%);
+}

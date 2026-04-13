@@ -1,7 +1,7 @@
 export interface ApiHealth {
-  status: "ok"
+    status: 'ok';
 }
 
 export function getApiHealth(): ApiHealth {
-  return { status: "ok" }
+    return { status: 'ok' };
 }

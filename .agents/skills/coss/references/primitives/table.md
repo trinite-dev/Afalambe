@@ -23,31 +23,31 @@ npm install @tanstack/react-table
 
 ```tsx
 import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 ```
 
 ## Minimal pattern
 
 ```tsx
 <Table>
-  <TableHeader>
-    <TableRow>
-      <TableHead>Name</TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow>
-      <TableCell>Ada Lovelace</TableCell>
-    </TableRow>
-  </TableBody>
+    <TableHeader>
+        <TableRow>
+            <TableHead>Name</TableHead>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        <TableRow>
+            <TableCell>Ada Lovelace</TableCell>
+        </TableRow>
+    </TableBody>
 </Table>
 ```
 
@@ -74,4 +74,3 @@ import {
 - framed table layout: `p-table-2`
 - TanStack integration with row selection: `p-table-3`
 - TanStack sorting + pagination + footer controls: `p-table-4`
-

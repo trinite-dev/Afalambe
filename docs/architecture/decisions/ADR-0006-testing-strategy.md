@@ -11,9 +11,9 @@ The project requires a practical testing approach that balances speed and reliab
 ## Decision
 
 - Use layered testing:
-  - Unit tests for pure logic
-  - Integration tests for API/data/provider boundaries
-  - Focused end-to-end tests for critical user journeys
+    - Unit tests for pure logic
+    - Integration tests for API/data/provider boundaries
+    - Focused end-to-end tests for critical user journeys
 - Require regression tests for bug fixes.
 - Enforce lint and typecheck as baseline quality gates.
 
