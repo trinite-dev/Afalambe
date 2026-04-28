@@ -2,6 +2,7 @@ import '@afalambe/ui/styles.css';
 import type { Metadata } from 'next';
 import { AppToastProviders } from '@/components/app-toast-providers';
 import { ThemeProvider } from '@/components/theme-provider';
+import { TrpcProvider } from '@/components/trpc-provider';
 import {
     getMetadataBase,
     shouldAllowIndexing,
@@ -28,8 +29,8 @@ export const metadata: Metadata = {
     creator: siteName,
     openGraph: {
         type: 'website',
-        locale: 'en_US',
-        alternateLocale: ['fr_FR'],
+        locale: 'fr_FR',
+        alternateLocale: ['en_US'],
         url: metadataBase,
         siteName,
         title: siteName,
@@ -64,10 +65,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" className="font-sans antialiased" suppressHydrationWarning>
-            <body className="min-h-dvh">
+        <html lang="fr" suppressHydrationWarning>
+            <body className="min-h-dvh font-sans antialiased">
                 <ThemeProvider>
-                    <AppToastProviders>{children}</AppToastProviders>
+                    <TrpcProvider>
+                        <AppToastProviders>{children}</AppToastProviders>
+                    </TrpcProvider>
                 </ThemeProvider>
             </body>
         </html>
