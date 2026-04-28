@@ -34,7 +34,7 @@ export function AuthPageShell({
     return (
         <LandingKitRoot className={cn('relative flex flex-col', className)}>
             {topStartSlot ?? topEndSlot ? (
-                <div className="fixed left-4 right-4 top-4 z-[60] flex items-center justify-between gap-3">
+                <div className="fixed left-4 right-4 top-4 z-[70] flex items-center justify-between gap-3">
                     <div className="min-w-0 shrink-0">{topStartSlot}</div>
                     <div className="shrink-0">{topEndSlot}</div>
                 </div>

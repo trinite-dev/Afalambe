@@ -7,8 +7,8 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { SignUpForm } from '@/components/auth/sign-up-form'
 
 export const metadata: Metadata = {
-    title: 'Sign up',
-    description: 'Create an Afalambe account.',
+    title: 'Inscription',
+    description: 'Creez un compte Afalambe.',
     robots: { index: false, follow: false },
 }
 
@@ -32,18 +32,18 @@ export default async function SignUpPage({ searchParams }: Props) {
             topStartSlot={<AuthTopBackLink href="/" />}
             topEndSlot={<ThemeToggle />}
             logo={<BrandLogo className="h-7 max-w-[10rem] sm:h-8 sm:max-w-[11rem]" width={160} height={35} priority />}
-            title="Create your account"
-            description="Start verifying claims in your language."
+            title="Creez votre compte"
+            description="Commencez a verifier des dossiers dans votre langue."
         >
             <SignUpForm searchParams={params} />
             <AuthCardFooter>
                 <p>
-                    Already have an account?{' '}
+                    Vous avez deja un compte ?{' '}
                     <Link
                         href={{ pathname: '/sign-in', query: params }}
                         className="font-medium text-[var(--lp-accent)] hover:underline"
                     >
-                        Sign in
+                        Connexion
                     </Link>
                 </p>
             </AuthCardFooter>

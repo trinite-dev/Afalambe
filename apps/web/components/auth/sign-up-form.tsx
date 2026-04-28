@@ -17,22 +17,24 @@ import {
 } from '@afalambe/ui/components/field';
 import { Input } from '@afalambe/ui/components/input';
 import { PasswordInputWithToggle } from '@/components/auth/password-input-with-toggle';
+import { notifyApiError } from '@/lib/api-toast';
+import { trpc } from '@/lib/trpc';
 
 const PASSWORD_MIN = 8;
 
 const signUpSchema = z.object({
     email: z
         .string()
-        .min(1, 'Email is required')
-        .email('Enter a valid email address'),
+        .min(1, "L'e-mail est requis")
+        .email('Saisissez une adresse e-mail valide'),
     password: z
         .string()
         .min(
             PASSWORD_MIN,
-            `Password must be at least ${PASSWORD_MIN} characters`,
+            `Le mot de passe doit contenir au moins ${PASSWORD_MIN} caractères`,
         )
-        .regex(/[A-Z]/, 'Include at least one uppercase letter')
-        .regex(/[0-9]/, 'Include at least one number'),
+        .regex(/[A-Z]/, 'Incluez au moins une lettre majuscule')
+        .regex(/[0-9]/, 'Incluez au moins un chiffre'),
 });
 
 type FieldErrors = Partial<Record<'email' | 'password' | 'root', string>>;
@@ -45,7 +47,7 @@ export type SignUpFormProps = {
 export function SignUpForm({ searchParams }: SignUpFormProps): ReactElement {
     const router = useRouter();
     const [errors, setErrors] = useState<FieldErrors>({});
-    const [loading, setLoading] = useState(false);
+    const register = trpc.auth.register.useMutation();
 
     const handleSubmit = useCallback(
         (e: FormEvent<HTMLFormElement>) => {
@@ -70,19 +72,25 @@ export function SignUpForm({ searchParams }: SignUpFormProps): ReactElement {
                 return;
             }
 
-            setLoading(true);
-
-            // Phase 2: call auth.register via tRPC here.
-            // On success redirect to OTP verification; on failure map errors.
-            window.setTimeout(() => {
-                setLoading(false);
-                const params = new URLSearchParams({
+            register.mutate(
+                {
                     email: result.data.email,
-                });
-                router.push(`/sign-up/verify?${params.toString()}`);
-            }, 600);
+                    password: result.data.password,
+                },
+                {
+                    onSuccess: () => {
+                        router.push(`/sign-up/verify?email=${encodeURIComponent(result.data.email)}`);
+                    },
+                    onError: (error) => {
+                        notifyApiError({
+                            title: 'Inscription impossible',
+                            description: error.message,
+                        });
+                    },
+                },
+            );
         },
-        [router],
+        [register, router],
     );
 
     return (
@@ -129,16 +137,16 @@ export function SignUpForm({ searchParams }: SignUpFormProps): ReactElement {
                     aria-invalid={Boolean(errors.password) || undefined}
                 />
                 <FieldDescription>
-                    At least {PASSWORD_MIN} characters, one uppercase letter,
-                    and one number.
+                    Au moins {PASSWORD_MIN} caracteres, une lettre majuscule et
+                    un chiffre.
                 </FieldDescription>
                 {errors.password ? (
                     <FieldError>{errors.password}</FieldError>
                 ) : null}
             </Field>
 
-            <Button type="submit" loading={loading} className="mt-1 w-full">
-                Create account
+            <Button type="submit" loading={register.isPending} className="mt-1 w-full">
+                Creer un compte
             </Button>
         </form>
     );

@@ -6,19 +6,22 @@ import {
     type FormEvent,
     type ReactElement,
 } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { Button } from '@afalambe/ui/components/button';
 import { Field, FieldError, FieldLabel } from '@afalambe/ui/components/field';
 import { Input } from '@afalambe/ui/components/input';
 import { PasswordInputWithToggle } from '@/components/auth/password-input-with-toggle';
 import { notifyApiError } from '@/lib/api-toast';
+import { trpc } from '@/lib/trpc';
 
 const signInSchema = z.object({
     email: z
         .string()
-        .min(1, 'Email is required')
-        .email('Enter a valid email address'),
-    password: z.string().min(1, 'Password is required'),
+        .min(1, "L'e-mail est requis")
+        .email('Saisissez une adresse e-mail valide'),
+    password: z.string().min(1, 'Le mot de passe est requis'),
 });
 
 type FieldErrors = Partial<Record<'email' | 'password', string>>;
@@ -29,8 +32,9 @@ export type SignInFormProps = {
 };
 
 export function SignInForm({ searchParams }: SignInFormProps): ReactElement {
+    const router = useRouter();
     const [errors, setErrors] = useState<FieldErrors>({});
-    const [loading, setLoading] = useState(false);
+    const login = trpc.auth.login.useMutation();
 
     const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -54,20 +58,24 @@ export function SignInForm({ searchParams }: SignInFormProps): ReactElement {
             return;
         }
 
-        setLoading(true);
-
-        // Phase 2: call auth.login via tRPC here.
-        // On success redirect to /chat; on failure map tRPC error codes to FieldErrors.
-        // For now simulate a short delay then reset.
-        window.setTimeout(() => {
-            setLoading(false);
-            notifyApiError({
-                title: 'Sign-in unavailable',
-                description:
-                    'The API is not connected yet. Backend wiring ships in Phase 2; use toasts for all API errors.',
-            });
-        }, 600);
-    }, []);
+        login.mutate(
+            {
+                email: result.data.email,
+                password: result.data.password,
+            },
+            {
+                onSuccess: () => {
+                    router.push('/chat');
+                },
+                onError: (error) => {
+                    notifyApiError({
+                        title: 'Connexion impossible',
+                        description: error.message,
+                    });
+                },
+            },
+        );
+    }, [login, router]);
 
     return (
         <form
@@ -106,10 +114,15 @@ export function SignInForm({ searchParams }: SignInFormProps): ReactElement {
                 {errors.password ? (
                     <FieldError>{errors.password}</FieldError>
                 ) : null}
+                <div className="pt-1 text-right text-xs">
+                    <Link href="/forgot-password" className="text-[var(--lp-accent)] hover:underline">
+                        Mot de passe oublié ?
+                    </Link>
+                </div>
             </Field>
 
-            <Button type="submit" loading={loading} className="mt-1 w-full">
-                Sign in
+            <Button type="submit" loading={login.isPending} className="mt-1 w-full">
+                Se connecter
             </Button>
         </form>
     );
