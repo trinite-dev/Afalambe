@@ -18,7 +18,7 @@ import {
 import { Input } from '@afalambe/ui/components/input';
 import { PasswordInputWithToggle } from '@/components/auth/password-input-with-toggle';
 import { useUiLocale } from '@/hooks/use-ui-locale';
-import { notifyApiError } from '@/lib/api-toast';
+import { notifyApiError, notifyApiWarning } from '@/lib/api-toast';
 import { AUTH_MESSAGES, createSignUpSchema } from '@/lib/ui-locale';
 import { trpc } from '@/lib/trpc';
 
@@ -68,19 +68,35 @@ export function SignUpForm({ searchParams }: SignUpFormProps): ReactElement {
                     password: result.data.password,
                 },
                 {
-                    onSuccess: () => {
+                    onSuccess: (data) => {
+                        if (!data.verificationEmailSent) {
+                            const description = [
+                                data.verificationEmailError ??
+                                    messages.verificationEmailFailedDescription,
+                                data.devOtp ? `Dev OTP: ${data.devOtp}` : null,
+                            ]
+                                .filter(Boolean)
+                                .join(' ');
+                            notifyApiWarning({
+                                title: messages.verificationEmailFailedTitle,
+                                description,
+                            });
+                        }
                         push(`/sign-up/verify?email=${encodeURIComponent(result.data.email)}`);
                     },
                     onError: (error) => {
+                        const isConflict = error.data?.code === 'CONFLICT';
                         notifyApiError({
-                            title: messages.signUpFailed,
-                            description: error.message,
+                            title: isConflict ? messages.accountExistsTitle : messages.signUpFailed,
+                            description: isConflict
+                                ? messages.accountExistsDescription
+                                : error.message,
                         });
                     },
                 },
             );
         },
-        [messages.signUpFailed, push, register, signUpSchema],
+        [messages, push, register, signUpSchema],
     );
 
     return (

@@ -71,6 +71,10 @@ type AuthMessageSet = {
     sendResetLink: string;
     loginFailed: string;
     signUpFailed: string;
+    accountExistsTitle: string;
+    accountExistsDescription: string;
+    verificationEmailFailedTitle: string;
+    verificationEmailFailedDescription: string;
     showPasswordAria: string;
     hidePasswordAria: string;
     passwordMin: (min: number) => string;
@@ -93,6 +97,11 @@ export const AUTH_MESSAGES: Record<UiLocale, AuthMessageSet> = {
         sendResetLink: 'Envoyer le lien de reinitialisation',
         loginFailed: 'Connexion impossible',
         signUpFailed: 'Inscription impossible',
+        accountExistsTitle: 'Compte deja existant',
+        accountExistsDescription: 'Un compte existe deja pour cet e-mail. Connectez-vous plutot.',
+        verificationEmailFailedTitle: 'E-mail de verification non envoye',
+        verificationEmailFailedDescription:
+            "Le compte est cree, mais l'envoi Resend a echoue. Verifiez EMAIL_FROM / le domaine Resend, puis renvoyez le code.",
         showPasswordAria: 'Afficher le mot de passe',
         hidePasswordAria: 'Masquer le mot de passe',
         passwordMin: (min) => `Le mot de passe doit contenir au moins ${min} caracteres`,
@@ -114,6 +123,11 @@ export const AUTH_MESSAGES: Record<UiLocale, AuthMessageSet> = {
         sendResetLink: 'Send reset link',
         loginFailed: 'Sign in failed',
         signUpFailed: 'Sign up failed',
+        accountExistsTitle: 'Account already exists',
+        accountExistsDescription: 'An account already exists for this email. Sign in instead.',
+        verificationEmailFailedTitle: 'Verification email not sent',
+        verificationEmailFailedDescription:
+            'Your account was created, but Resend could not send the email. Check EMAIL_FROM / Resend domain, then resend the code.',
         showPasswordAria: 'Show password',
         hidePasswordAria: 'Hide password',
         passwordMin: (min) => `Password must be at least ${min} characters`,
