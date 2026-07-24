@@ -4,14 +4,18 @@ import { cn } from '../../lib/utils'
 
 export type ChatTypingIndicatorProps = {
     className?: string
+    ariaLabel?: string
 }
 
-export function ChatTypingIndicator({ className }: ChatTypingIndicatorProps): React.ReactElement {
+export function ChatTypingIndicator({
+    className,
+    ariaLabel = 'Assistant is typing',
+}: ChatTypingIndicatorProps): React.ReactElement {
     return (
         <div
             className={cn('flex items-center gap-1 px-1 py-2', className)}
             role="status"
-            aria-label="Assistant is typing"
+            aria-label={ariaLabel}
         >
             {[0, 1, 2].map((i) => (
                 <span

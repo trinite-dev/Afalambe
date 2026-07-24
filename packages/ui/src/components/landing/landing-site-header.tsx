@@ -20,7 +20,11 @@ export type LandingSiteHeaderProps = {
     /** Extra controls before sign-in (e.g. theme toggle). */
     headerActions?: React.ReactNode
     navItems?: LandingNavItem[]
+    navAriaLabel?: string
+    chatNavHref: string
+    chatNavLabel?: string
     signInHref: string
+    signInLabel?: string
     primaryCtaHref: string
     primaryCtaLabel: string
     className?: string
@@ -40,7 +44,11 @@ export function LandingSiteHeader({
     brandLogoAlt,
     headerActions,
     navItems = defaultNav,
+    navAriaLabel = 'Navigation principale',
+    chatNavHref,
+    chatNavLabel = 'Chat',
     signInHref,
+    signInLabel = 'Connexion',
     primaryCtaHref,
     primaryCtaLabel,
     className,
@@ -94,7 +102,7 @@ export function LandingSiteHeader({
                     </a>
                     <nav
                         className="hidden min-w-0 items-center gap-4 md:flex lg:gap-5"
-                        aria-label="Navigation principale"
+                        aria-label={navAriaLabel}
                     >
                         {navItems.map((item) => (
                             <a
@@ -106,17 +114,17 @@ export function LandingSiteHeader({
                             </a>
                         ))}
                         <a
-                            href="/chat"
+                            href={chatNavHref}
                             className="shrink-0 text-sm font-medium text-[var(--lp-fg-muted)] no-underline transition-colors hover:text-[var(--lp-fg)]"
                         >
-                            Chat
+                            {chatNavLabel}
                         </a>
                     </nav>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                     {headerActions}
                     <Button variant="ghost" size="sm" render={<a href={signInHref} />} className="hidden sm:inline-flex">
-                        Connexion
+                        {signInLabel}
                     </Button>
                     <Button
                         size="sm"

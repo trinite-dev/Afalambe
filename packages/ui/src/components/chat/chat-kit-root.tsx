@@ -13,7 +13,10 @@ export type ChatKitRootProps = {
  */
 export function ChatKitRoot({ children, className }: ChatKitRootProps): React.ReactElement {
     return (
-        <div data-ui-kit="chatgpt" className={cn('min-h-dvh w-full bg-[var(--chat-canvas)]', className)}>
+        <div
+            data-ui-kit="chatgpt"
+            className={cn('h-dvh w-full overflow-hidden bg-[var(--chat-canvas)]', className)}
+        >
             {children}
         </div>
     )

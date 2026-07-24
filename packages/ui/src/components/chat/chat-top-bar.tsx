@@ -14,6 +14,7 @@ export type ChatTopBarProps = {
     brandLogoAlt?: string
     className?: string
     trailing?: React.ReactNode
+    moreOptionsAria?: string
 }
 
 export function ChatTopBar({
@@ -24,6 +25,7 @@ export function ChatTopBar({
     brandLogoAlt,
     className,
     trailing,
+    moreOptionsAria = "Plus d'options",
 }: ChatTopBarProps): React.ReactElement {
     return (
         <header
@@ -86,7 +88,7 @@ export function ChatTopBar({
                     variant="ghost"
                     size="icon"
                     className="text-[var(--chat-control-icon)] hover:bg-[var(--chat-surface-hover)] hover:text-[var(--chat-control-icon-hover)]"
-                    aria-label="Plus d'options"
+                    aria-label={moreOptionsAria}
                 >
                     <MoreHorizontal className="size-4" />
                 </Button>

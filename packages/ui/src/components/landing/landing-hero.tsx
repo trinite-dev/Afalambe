@@ -16,6 +16,8 @@ export type LandingHeroProps = {
     primaryLabel: string
     secondaryHref: string
     secondaryLabel: string
+    samplePrompts?: string[]
+    composerPlaceholder?: string
     /**
      * Hero backdrop URL (`<img>`). Pass `null` to disable. Defaults to {@link LANDING_HERO_DEFAULT_BACKGROUND_SRC}.
      */
@@ -30,6 +32,8 @@ export function LandingHero({
     primaryLabel,
     secondaryHref,
     secondaryLabel,
+    samplePrompts,
+    composerPlaceholder,
     backgroundImageSrc,
     className,
 }: LandingHeroProps): React.ReactElement {
@@ -91,7 +95,11 @@ export function LandingHero({
                             </Button>
                         </div>
                     </div>
-                    <LandingHeroChatPreview className="w-full max-w-md shrink-0 pb-4 pt-2 sm:pb-6" />
+                    <LandingHeroChatPreview
+                        className="w-full max-w-md shrink-0 pb-4 pt-2 sm:pb-6"
+                        samplePrompts={samplePrompts}
+                        composerPlaceholder={composerPlaceholder}
+                    />
                 </div>
             </div>
         </section>

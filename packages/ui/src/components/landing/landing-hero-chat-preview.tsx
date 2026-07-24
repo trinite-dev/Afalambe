@@ -21,13 +21,19 @@ const HERO_SAMPLE_PROMPTS = [
 
 export type LandingHeroChatPreviewProps = {
     className?: string
+    samplePrompts?: string[]
+    composerPlaceholder?: string
 }
 
 /**
  * Decorative chat-style column for the marketing hero (non-interactive).
  * Layout and masking mirror the Veil-style reference (prompt list + composer).
  */
-export function LandingHeroChatPreview({ className }: LandingHeroChatPreviewProps): React.ReactElement {
+export function LandingHeroChatPreview({
+    className,
+    samplePrompts = [...HERO_SAMPLE_PROMPTS],
+    composerPlaceholder = 'Ask anything...',
+}: LandingHeroChatPreviewProps): React.ReactElement {
     return (
         <div
             aria-hidden
@@ -38,7 +44,7 @@ export function LandingHeroChatPreview({ className }: LandingHeroChatPreviewProp
             )}
         >
             <div className="relative flex flex-col gap-0.5 py-6">
-                {HERO_SAMPLE_PROMPTS.map((prompt, index) => (
+                {samplePrompts.map((prompt, index) => (
                     <div
                         key={index}
                         className="text-muted-foreground flex items-center gap-2 px-14 py-2 text-sm"
@@ -59,7 +65,7 @@ export function LandingHeroChatPreview({ className }: LandingHeroChatPreviewProp
                     <div className="hover:bg-muted flex size-9 shrink-0 cursor-default items-center justify-center rounded-full *:m-auto *:size-4">
                         <Plus />
                     </div>
-                    <div className="text-muted-foreground truncate text-sm">Ask anything...</div>
+                    <div className="text-muted-foreground truncate text-sm">{composerPlaceholder}</div>
                 </div>
                 <div className="flex shrink-0 items-center gap-0.5">
                     <div className="hover:bg-muted flex size-9 cursor-default items-center justify-center rounded-full *:m-auto *:size-4">
