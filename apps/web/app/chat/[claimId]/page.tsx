@@ -7,6 +7,11 @@ export async function generateMetadata() {
     return createChatPageMetadata();
 }
 
-export default function ChatPage(): ReactElement {
-    return <ChatPageClient />;
+export default async function ChatClaimPage({
+    params,
+}: {
+    params: Promise<{ claimId: string }>;
+}): Promise<ReactElement> {
+    const { claimId } = await params;
+    return <ChatPageClient initialClaimId={claimId} />;
 }

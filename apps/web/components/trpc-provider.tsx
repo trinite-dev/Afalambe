@@ -4,6 +4,7 @@ import { useState, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import { trpc } from '@/lib/trpc';
+import { fetchWithRetry } from '@/lib/fetch-with-retry';
 
 const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000').replace(/\/$/, '');
 
@@ -15,7 +16,7 @@ export function TrpcProvider({ children }: { children: ReactNode }) {
                 httpBatchLink({
                     url: `${apiUrl}/trpc`,
                     fetch(url, options) {
-                        return fetch(url, {
+                        return fetchWithRetry(url, {
                             ...options,
                             credentials: 'include',
                         });
