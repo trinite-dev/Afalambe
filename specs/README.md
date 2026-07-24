@@ -60,6 +60,8 @@ Each row links PRODUCT + TECH. Status reflects codebase as of spec authoring.
 | 0042 | Source URL images and previews | [PRODUCT](./feat-0042/PRODUCT.md) | [TECH](./feat-0042/TECH.md) | Implemented |
 | 0043 | Detect meta / follow-up vs fact-check chats | [PRODUCT](./feat-0043/PRODUCT.md) | [TECH](./feat-0043/TECH.md) | Implemented |
 | 0044 | Static chat sidebar, scrollable main | [PRODUCT](./feat-0044/PRODUCT.md) | [TECH](./feat-0044/TECH.md) | Implemented |
+| 0045 | Signup verification email delivery | [PRODUCT](./feat-0045/PRODUCT.md) | [TECH](./feat-0045/TECH.md) | Implemented |
+| 0046 | Core hardening + TruthSentry ops parity | [PRODUCT](./feat-0046/PRODUCT.md) | [TECH](./feat-0046/TECH.md) | Implemented |
 
 ## Critical path (core product)
 
@@ -85,9 +87,11 @@ feat-0033 (ops) + feat-0027 (env) + feat-0022 (DB)
 | [feat-0038](./feat-0038/PRODUCT.md) | Static `_data` fact-check corpus + DB evidence grounding |
 | [feat-0040](./feat-0040/PRODUCT.md) | Structured fact-check details card on every assistant reply |
 | [feat-0041](./feat-0041/PRODUCT.md) | Durable chat history across reload, login, and logout |
-| [feat-0042](./feat-0042/PRODUCT.md) | Source URL image thumbnails and link previews in fact-check details |
+| [feat-0042](./feat-0042/PRODUCT.md) | Source URL image thumbnails and link previews |
 | [feat-0043](./feat-0043/PRODUCT.md) | Detect meta and follow-up questions vs fact-check claims |
 | [feat-0044](./feat-0044/PRODUCT.md) | Static chat sidebar; main content scrolls independently |
+| [feat-0045](./feat-0045/PRODUCT.md) | Signup verification email delivery reliability |
+| [feat-0046](./feat-0046/PRODUCT.md) | Core loop hardening, admin resolve parity, port 3002 / migrate baseline |
 | [feat-0030](./feat-0030/PRODUCT.md) | Verdicts, status machine, email trigger truth |
 | [feat-0031](./feat-0031/PRODUCT.md) | AI phases (replaces reading full AI_CHATBOT_SPEC for planning) |
 | [feat-0032](./feat-0032/PRODUCT.md) | Auto-scroll, copy, composer limits |

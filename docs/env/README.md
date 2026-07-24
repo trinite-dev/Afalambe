@@ -21,7 +21,9 @@ This document defines required environment variables by runtime.
 - `AUTH_COOKIE_NAME`: HTTP-only session cookie name
 - `AUTH_COOKIE_SECURE`: set `true` in production
 - `RESEND_API_KEY`: Resend API key for transactional sends
-- `EMAIL_FROM`: verified sender address for transactional sends
+- `EMAIL_FROM`: verified sender address for transactional sends. Must use a domain verified in Resend for production. For local sandbox only, `beth.t@example.com` (recipient restrictions apply).
+- `EMAIL_DEV_LOG_OTP`: when `true` and not production, log verification OTP to the API console if Resend fails
+- `EMAIL_DEV_EXPOSE_OTP`: when `true` and not production, include `devOtp` on register response (local UI only; never enable in production)
 - `RESEND_WEBHOOK_SIGNING_SECRET`: shared secret used to verify Resend webhook requests
 
 ## packages/emails (Resend)
@@ -31,7 +33,30 @@ This document defines required environment variables by runtime.
 
 ## packages/prisma
 
-- `DATABASE_URL`: Prisma datasource URL
+- `DATABASE_URL`: Prisma datasource URL (runtime / migrate target)
+- Optional `packages/prisma/.env` — use this when migrations should hit a different DB than `apps/api/.env` (e.g. local Postgres vs remote Supabase)
+
+### Migrations
+
+Baseline `20260401000000_init` creates `User` / `Session` / `Claim` / `ClaimMessage` (idempotent). Later migrations ALTER those tables.
+
+```bash
+# Preferred when applying known migrations (CI / existing DB)
+pnpm --filter @afalambe/prisma exec prisma migrate deploy
+
+# Local iterative (creates new migrations when schema changes)
+pnpm --filter @afalambe/prisma db:migrate
+```
+
+If your DB already applied later migrations before the init baseline existed, mark init as applied once:
+
+```bash
+pnpm --filter @afalambe/prisma exec prisma migrate resolve --applied 20260401000000_init
+```
+
+## Local web port
+
+Dev web is pinned to **http://localhost:3002** (`next dev -p 3002`). Set `NEXT_PUBLIC_APP_URL` accordingly in `apps/web/.env` and `apps/api/.env`. If Turbo still shows web as failed after a port change, restart `pnpm dev:all` and clear a stale `apps/web/.next` if duplicate Next processes fought over cache.
 
 ## AI pipeline
 
