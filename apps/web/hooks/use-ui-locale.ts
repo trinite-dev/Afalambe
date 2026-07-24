@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { getLocaleFromPathname, localizedPath } from '@/lib/localized-path';
@@ -10,6 +10,11 @@ import {
     type UiLocale,
 } from '@/lib/ui-locale';
 
+function currentSearch(): string {
+    if (typeof window === 'undefined') return '';
+    return window.location.search || '';
+}
+
 export function useUiLocale(): {
     locale: UiLocale;
     setLocale: (locale: UiLocale) => void;
@@ -18,8 +23,6 @@ export function useUiLocale(): {
 } {
     const router = useRouter();
     const pathname = usePathname() ?? '/';
-    const searchParams = useSearchParams();
-    const search = searchParams?.toString() ? `?${searchParams.toString()}` : '';
 
     const locale = useMemo(() => getLocaleFromPathname(pathname), [pathname]);
 
@@ -30,9 +33,9 @@ export function useUiLocale(): {
 
     const setLocale = useCallback(
         (next: UiLocale) => {
-            router.push(localizedPath(pathname, next, search));
+            router.push(localizedPath(pathname, next, currentSearch()));
         },
-        [pathname, router, search],
+        [pathname, router],
     );
 
     const toggleLocale = useCallback(() => {
