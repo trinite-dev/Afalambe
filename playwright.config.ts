@@ -14,4 +14,18 @@ export default defineConfig({
             use: { ...devices['Desktop Chrome'] },
         },
     ],
+    webServer: [
+        {
+            command: 'pnpm dev:api',
+            url: 'http://localhost:4000/',
+            reuseExistingServer: !process.env.CI,
+            timeout: 120_000,
+        },
+        {
+            command: 'pnpm dev:web',
+            url: 'http://localhost:3000',
+            reuseExistingServer: !process.env.CI,
+            timeout: 120_000,
+        },
+    ],
 });

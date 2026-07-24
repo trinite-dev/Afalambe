@@ -17,7 +17,7 @@ This document defines required environment variables by runtime.
 - `SUPABASE_STORAGE_BUCKET_CHAT_UPLOADS`: storage bucket for chat image uploads
 - `CHAT_IMAGE_MAX_BYTES`: max image upload size in bytes
 - `CHAT_ALLOWED_IMAGE_MIME_TYPES`: comma-separated allowlist for image mimes
-- `AUTH_SECRET`: auth/session secret used for server-side credentials
+- `AUTH_SECRET`: documented in templates; **unused in application code** (see [feat-0027](../feat-0027/PRODUCT.md))
 - `AUTH_COOKIE_NAME`: HTTP-only session cookie name
 - `AUTH_COOKIE_SECURE`: set `true` in production
 - `RESEND_API_KEY`: Resend API key for transactional sends
@@ -35,9 +35,12 @@ This document defines required environment variables by runtime.
 
 ## AI pipeline
 
-- `AI_PROVIDER`: provider identifier
-- `AI_MODEL`: model name/version
-- `AI_API_KEY`: provider API key
+- `AI_PROVIDER`: `openai` (default) or `gemini` / `google`
+- `AI_MODEL`: model name/version (`gpt-4.1-mini` for OpenAI, `gemini-flash-latest` for Gemini)
+- `AI_API_KEY`: provider API key (server only; used by `claim.generateAssistantReply`, metadata extraction, and transcription)
+- `NEXT_PUBLIC_OPENAI_API_KEY`: **not used** — voice transcription is proxied via API (`claim.transcribeAudio`) with server `AI_API_KEY` ([feat-0015](../../specs/feat-0015/PRODUCT.md))
+
+When `AI_PROVIDER=gemini`, chat and metadata use Google Generative Language `generateContent`. Transcription uses Gemini multimodal audio.
 
 ## Notes
 
