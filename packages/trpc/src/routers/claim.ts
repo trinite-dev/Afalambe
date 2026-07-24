@@ -43,6 +43,12 @@ async function refreshMessageAttachments(
     );
 }
 
+function assistantFailureMessage(claimLanguage?: string | null): string {
+    return claimLanguage === 'en'
+        ? 'I cannot process your request right now. Please try again.'
+        : 'Je ne peux pas traiter votre demande pour le moment. Veuillez reessayer.';
+}
+
 const VERDICT_PATTERN =
     /\b(verified|debunked|misleading|partially[_ ]true)\b/i;
 
@@ -578,8 +584,7 @@ export const claimRouter = createTRPCRouter({
                 }
             } catch {
                 aiFailed = true;
-                assistantText =
-                    'Je ne peux pas traiter votre demande pour le moment. Veuillez reessayer.';
+                assistantText = assistantFailureMessage(claim.claimLanguage);
             }
 
             const verdict = aiFailed || !isFactCheck ? null : parseVerdict(assistantText);

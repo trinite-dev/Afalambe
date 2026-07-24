@@ -37,7 +37,9 @@ export const adminRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             const claims = await ctx.prisma.claim.findMany({
                 where: {
-                    ...(input.status ? { status: input.status } : {}),
+                    status: input.status
+                        ? input.status
+                        : { in: ['FAILED', 'OPEN', 'PROCESSING'] },
                     ...(input.factCheckStatus ? { factCheckStatus: input.factCheckStatus } : {}),
                     ...(input.search
                         ? {
@@ -114,8 +116,9 @@ export const adminRouter = createTRPCRouter({
             }
 
             const now = new Date();
+            const auditAction = input.status === 'RESOLVED' ? 'claim.resolve' : 'claim.updateStatus';
 
-            await ctx.prisma.$transaction([
+            const [, assistantMessage, systemMessage] = await ctx.prisma.$transaction([
                 ctx.prisma.claim.update({
                     where: { id: input.claimId },
                     data: {
@@ -128,6 +131,13 @@ export const adminRouter = createTRPCRouter({
                 ctx.prisma.claimMessage.create({
                     data: {
                         claimId: input.claimId,
+                        role: 'ASSISTANT',
+                        content: input.resolutionNote,
+                    },
+                }),
+                ctx.prisma.claimMessage.create({
+                    data: {
+                        claimId: input.claimId,
                         role: 'SYSTEM',
                         content: `[Reviewer] ${input.resolutionNote}`,
                     },
@@ -135,7 +145,7 @@ export const adminRouter = createTRPCRouter({
                 ctx.prisma.adminAuditLog.create({
                     data: {
                         actorUserId: ctx.sessionUser.id,
-                        action: 'claim.updateStatus',
+                        action: auditAction,
                         targetType: 'claim',
                         targetId: input.claimId,
                         payload: {
@@ -146,6 +156,20 @@ export const adminRouter = createTRPCRouter({
                 }),
             ]);
 
+            ctx.broadcastToClaimSubscribers?.(input.claimId, {
+                type: 'message.created',
+                payload: {
+                    claimId: input.claimId,
+                    messageId: assistantMessage.id,
+                },
+            });
+            ctx.broadcastToClaimSubscribers?.(input.claimId, {
+                type: 'message.created',
+                payload: {
+                    claimId: input.claimId,
+                    messageId: systemMessage.id,
+                },
+            });
             ctx.broadcastToClaimSubscribers?.(input.claimId, {
                 type: 'claim.statusChanged',
                 payload: {
