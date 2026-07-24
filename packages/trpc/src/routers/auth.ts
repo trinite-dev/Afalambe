@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../core';
+import { checkRateLimit } from '../rate-limit';
 import {
     createOtpCode,
     createRawToken,
@@ -17,6 +18,11 @@ export const authRouter = createTRPCRouter({
         .input(signUpSchema)
         .output(z.object({ userId: z.string().cuid() }))
         .mutation(async ({ ctx, input }) => {
+            const rateLimitKey = `register:${input.email}`;
+            if (!checkRateLimit(rateLimitKey, 3, 3_600_000)) {
+                throw new TRPCError({ code: 'TOO_MANY_REQUESTS', message: 'Trop de requetes. Reessayez dans une heure.' });
+            }
+
             const existing = await ctx.prisma.user.findUnique({ where: { email: input.email } });
             if (existing) {
                 throw new TRPCError({ code: 'CONFLICT', message: "Cet e-mail est deja utilise." });
@@ -70,6 +76,11 @@ export const authRouter = createTRPCRouter({
         .input(signInSchema)
         .output(z.object({ userId: z.string().cuid(), email: z.email() }))
         .mutation(async ({ ctx, input }) => {
+            const rateLimitKey = `login:${input.email}`;
+            if (!checkRateLimit(rateLimitKey, 10, 60_000)) {
+                throw new TRPCError({ code: 'TOO_MANY_REQUESTS', message: 'Trop de requetes. Reessayez dans une minute.' });
+            }
+
             const user = await ctx.prisma.user.findUnique({ where: { email: input.email } });
             if (!user) {
                 throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Identifiants invalides.' });
@@ -220,6 +231,11 @@ export const authRouter = createTRPCRouter({
     logout: protectedProcedure
         .output(z.object({ ok: z.literal(true) }))
         .mutation(async ({ ctx }) => {
+            if (ctx.sessionTokenHash) {
+                await ctx.prisma.session.deleteMany({
+                    where: { tokenHash: ctx.sessionTokenHash },
+                });
+            }
             ctx.clearSessionCookie();
             return { ok: true };
         }),

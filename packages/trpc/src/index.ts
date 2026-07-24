@@ -14,5 +14,5 @@ export const appRouter = createTRPCRouter({
 });
 
 export type AppRouter = typeof appRouter;
-export type { SessionUser, TrpcContext } from './types';
+export type { ClaimContext, ExtractedMetadata, SessionUser, TrpcContext } from './types';
 export { createTRPCRouter, publicProcedure } from './core';
