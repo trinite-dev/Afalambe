@@ -35,7 +35,7 @@ Map their pattern to Afalambè:
 | Source credibility / red flags    | Explain that the system uses **curated sources** and **confidence**, and escalates to **humans** when needed (accuracy claims must be honest and bounded). |
 | Privacy FAQ                       | Align with `program.md` and legal: encryption in transit, retention, who can see claims (admins for queue).                                                |
 
-Optional later: a **non-authenticated** “demo” or sample screenshot section on the landing page only if legal and product approve (out of scope for MVP unless amended).
+Optional: a **non-authenticated** interactive demo at **`/demo`** / **`/en/demo`** ([feat-0035](./feat-0035/PRODUCT.md)); the landing hero may link there via `href('/demo')` ([feat-0036](./feat-0036/PRODUCT.md)).
 
 ## Non-goals
 
