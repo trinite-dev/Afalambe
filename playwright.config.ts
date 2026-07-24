@@ -5,7 +5,7 @@ export default defineConfig({
     timeout: 30_000,
     retries: process.env.CI ? 2 : 0,
     use: {
-        baseURL: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
+        baseURL: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3002',
         trace: 'on-first-retry',
     },
     projects: [
@@ -23,7 +23,7 @@ export default defineConfig({
         },
         {
             command: 'pnpm dev:web',
-            url: 'http://localhost:3000',
+            url: 'http://localhost:3002',
             reuseExistingServer: !process.env.CI,
             timeout: 120_000,
         },

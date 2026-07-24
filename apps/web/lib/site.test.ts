@@ -6,7 +6,7 @@ test('getMetadataBase falls back to localhost', () => {
     const previous = process.env.NEXT_PUBLIC_APP_URL;
     delete process.env.NEXT_PUBLIC_APP_URL;
     const url = getMetadataBase();
-    assert.equal(url.toString(), 'http://localhost:3000/');
+    assert.equal(url.toString(), 'http://localhost:3002/');
     if (previous) {
         process.env.NEXT_PUBLIC_APP_URL = previous;
     }

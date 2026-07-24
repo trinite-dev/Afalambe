@@ -5,8 +5,8 @@
     "type": "module",
     "scripts": {
         "build": "next build",
-        "dev": "next dev",
-        "start": "next start",
+        "dev": "next dev -p 3002",
+        "start": "next start -p 3002",
         "lint": "tsc --noEmit",
         "typecheck": "tsc --noEmit",
         "test": "tsx --test lib/*.test.ts",

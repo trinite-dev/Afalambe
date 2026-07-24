@@ -13,7 +13,7 @@ Onboarding and ops steps were only in root `README.md`; feat specs assumed a run
 | Command | Purpose |
 |---------|---------|
 | `pnpm install` | Install all workspaces |
-| `pnpm dev:all` | Web (:3000) + API (:4000) via Turbo |
+| `pnpm dev:all` | Web (:3002) + API (:4000) via Turbo |
 | `pnpm dev:web` / `pnpm dev:api` | Single app |
 | `pnpm --filter @afalambe/prisma exec prisma migrate deploy` | Apply migrations |
 | `pnpm db:studio` | Prisma Studio |

@@ -55,7 +55,7 @@ export const siteThemeColor = '#9B1B30'
 export function getMetadataBase(): URL {
     const raw = process.env.NEXT_PUBLIC_APP_URL
     if (!raw) {
-        return new URL('http://localhost:3000')
+        return new URL('http://localhost:3002')
     }
     return new URL(raw.endsWith('/') ? raw.slice(0, -1) : raw)
 }

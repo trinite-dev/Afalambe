@@ -12,7 +12,7 @@
 
 | Package | Dev | Port |
 |---------|-----|------|
-| `@afalambe/web` | `next dev` | 3000 |
+| `@afalambe/web` | `next dev -p 3002` | 3002 |
 | `@afalambe/api` | `tsx watch src/index.ts` | `API_PORT` 4000 |
 
 API must load [`load-env.ts`](../../apps/api/src/load-env.ts) first.

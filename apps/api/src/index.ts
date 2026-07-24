@@ -39,16 +39,18 @@ const CHAT_ALLOWED_IMAGE_MIME_TYPES = (process.env.CHAT_ALLOWED_IMAGE_MIME_TYPES
     .filter(Boolean);
 const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SIGNING_SECRET ?? '';
 
-/** Local Next.js may bind 3000 or the next free port (often 3001). */
+/** Local Next.js is pinned to 3002; keep 3000/3001 for older tabs and stray processes. */
 const DEFAULT_DEV_WEB_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:3001',
+    'http://localhost:3002',
     'http://127.0.0.1:3000',
     'http://127.0.0.1:3001',
+    'http://127.0.0.1:3002',
 ];
 
 function getCorsAllowedOrigins(): string[] {
-    const primary = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const primary = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3002';
     const extra = (process.env.CORS_ALLOWED_ORIGINS ?? '')
         .split(',')
         .map((value) => value.trim())
@@ -63,7 +65,7 @@ function applyCorsHeaders(req: { headers: { origin?: string | string[] } }, res:
     const originHeader = req.headers.origin;
     const origin = Array.isArray(originHeader) ? originHeader[0] : originHeader;
     const matched = origin && allowed.includes(origin) ? origin : allowed[0];
-    res.setHeader('Access-Control-Allow-Origin', matched ?? 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', matched ?? 'http://localhost:3002');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
 }
 
@@ -141,7 +143,7 @@ async function createContext(opts: CreateHTTPContextOptions): Promise<TrpcContex
         prisma,
         sessionUser,
         sessionTokenHash,
-        appUrl: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
+        appUrl: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3002',
         setSessionCookie: (token, expiresAt) => {
             opts.res.setHeader('Set-Cookie', buildCookie(token, expiresAt));
         },
@@ -844,8 +846,29 @@ const isMainModule = process.argv[1]
     : false;
 
 if (isMainModule) {
-    server.listen(port);
-    console.log(`@afalambe/api listening on :${port}`);
+    const shutdown = (): void => {
+        server.close(() => {
+            process.exit(0);
+        });
+        setTimeout(() => process.exit(0), 2_000).unref();
+    };
+    process.once('SIGTERM', shutdown);
+    process.once('SIGINT', shutdown);
+
+    server.on('error', (err: NodeJS.ErrnoException) => {
+        if (err.code === 'EADDRINUSE') {
+            console.error(
+                `@afalambe/api: port ${port} is already in use. Stop the other process (lsof -iTCP:${port} -sTCP:LISTEN) or set API_PORT.`,
+            );
+            process.exit(1);
+        }
+        console.error('@afalambe/api listen error', err);
+        process.exit(1);
+    });
+
+    server.listen(port, () => {
+        console.log(`@afalambe/api listening on :${port}`);
+    });
 
     setInterval(async () => {
         try {
