@@ -3,13 +3,20 @@
     "version": "0.0.0",
     "private": true,
     "type": "module",
+    "exports": {
+        ".": "./src/index.ts",
+        "./fact-check-details": "./src/format-fact-check-footer.ts",
+        "./intent": "./src/classify-message-intent.ts"
+    },
     "scripts": {
         "build": "tsc --noEmit",
         "lint": "tsc --noEmit",
         "typecheck": "tsc --noEmit",
-        "test": "node --test"
+        "test": "tsx --test src/*.test.ts"
     },
     "devDependencies": {
+        "@types/node": "^22.10.2",
+        "tsx": "^4.20.6",
         "typescript": "^5.9.2"
     }
 }
