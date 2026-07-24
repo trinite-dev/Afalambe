@@ -1,3 +1,5 @@
+'use client';
+
 import type { ReactElement } from 'react';
 import {
     Bell,
@@ -10,6 +12,7 @@ import {
 
 import { Card } from '@afalambe/ui/components/card';
 import { cn } from '@afalambe/ui/lib/utils';
+import type { LandingContent } from '@/lib/landing-content';
 
 const cardOutline =
     'border-[var(--lp-border)] bg-[var(--lp-bg-elevated)]/90 shadow-[var(--lp-shadow-sm)] before:shadow-none';
@@ -27,21 +30,22 @@ function PillIcon({ children }: { children: React.ReactNode }): ReactElement {
     );
 }
 
-/**
- * Feature grid for the marketing home (above "How it works").
- * Visual pattern inspired by integration-style cards; content is Afalambè-specific.
- */
-export function LandingFeatures(): ReactElement {
+type LandingFeaturesProps = {
+    content: Pick<LandingContent, 'featuresHeading' | 'featuresSubtitle' | 'featureCards'>;
+};
+
+export function LandingFeatures({ content }: LandingFeaturesProps): ReactElement {
+    const [multilingual, confidence, limits, oversight] = content.featureCards;
+
     return (
         <section className="@container border-b border-[var(--lp-border)] bg-[var(--lp-bg)] py-16 sm:py-24">
             <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:max-w-5xl">
                 <div>
                     <h2 className="text-balance text-3xl font-medium tracking-tight text-[var(--lp-fg)] sm:text-4xl">
-                        Concu pour une verification fiable
+                        {content.featuresHeading}
                     </h2>
                     <p className="mt-4 max-w-2xl text-balance text-[var(--lp-fg-muted)] sm:text-lg">
-                        Des sources selectionnees, des signaux de confiance clairs, et une verification
-                        humaine quand l'automatisation atteint ses limites.
+                        {content.featuresSubtitle}
                     </p>
                 </div>
                 <div className="mt-12 grid gap-3 *:p-6 @xl:grid-cols-2">
@@ -52,11 +56,8 @@ export function LandingFeatures(): ReactElement {
                         )}
                     >
                         <div className="space-y-2">
-                            <h3 className="font-medium text-[var(--lp-fg)]">Saisie multilingue</h3>
-                            <p className="text-sm text-[var(--lp-fg-muted)]">
-                                Le chat et les formulaires acceptent les langues de votre communaute,
-                                y compris le fula et le peul.
-                            </p>
+                            <h3 className="font-medium text-[var(--lp-fg)]">{multilingual?.title}</h3>
+                            <p className="text-sm text-[var(--lp-fg-muted)]">{multilingual?.description}</p>
                         </div>
                         <div
                             aria-hidden
@@ -98,11 +99,8 @@ export function LandingFeatures(): ReactElement {
                         )}
                     >
                         <div className="space-y-2">
-                            <h3 className="font-medium text-[var(--lp-fg)]">Confiance explicite</h3>
-                            <p className="text-sm text-[var(--lp-fg-muted)]">
-                                Quand un dossier correspond a des sources selectionnees, vous obtenez
-                                une reponse directe ; sinon, l'incertitude est explicite.
-                            </p>
+                            <h3 className="font-medium text-[var(--lp-fg)]">{confidence?.title}</h3>
+                            <p className="text-sm text-[var(--lp-fg-muted)]">{confidence?.description}</p>
                         </div>
                         <div aria-hidden className="relative h-44 translate-y-6">
                             <div className="absolute inset-0 mx-auto w-px bg-[var(--lp-fg)]/15" />
@@ -129,11 +127,8 @@ export function LandingFeatures(): ReactElement {
                         )}
                     >
                         <div className="space-y-2">
-                            <h3 className="font-medium text-[var(--lp-fg)]">Limites transparentes</h3>
-                            <p className="mt-2 text-sm text-[var(--lp-fg-muted)]">
-                                Les politiques et le perimetre des sources sont visibles pour que les
-                                equipes sachent ce qui peut etre verifie automatiquement.
-                            </p>
+                            <h3 className="font-medium text-[var(--lp-fg)]">{limits?.title}</h3>
+                            <p className="mt-2 text-sm text-[var(--lp-fg-muted)]">{limits?.description}</p>
                         </div>
                         <div
                             aria-hidden
@@ -156,11 +151,8 @@ export function LandingFeatures(): ReactElement {
                         )}
                     >
                         <div className="space-y-2">
-                            <h3 className="font-medium text-[var(--lp-fg)]">Supervision humaine</h3>
-                            <p className="text-sm text-[var(--lp-fg-muted)]">
-                                Les escalades conservent tout le contexte pour les relecteurs quand le
-                                modele ne peut pas confirmer avec certitude.
-                            </p>
+                            <h3 className="font-medium text-[var(--lp-fg)]">{oversight?.title}</h3>
+                            <p className="text-sm text-[var(--lp-fg-muted)]">{oversight?.description}</p>
                         </div>
                         <div className="pointer-events-none relative -ml-7 flex size-44 items-center justify-center pt-5">
                             <Shield className="absolute inset-0 top-2.5 size-full stroke-[0.1px] text-[var(--lp-fg)] opacity-15" />

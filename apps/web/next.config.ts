@@ -6,7 +6,7 @@ import type { NextConfig } from 'next';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
-    transpilePackages: ['@afalambe/ui'],
+    transpilePackages: ['@afalambe/ui', '@afalambe/ai'],
     // Hide the route dev indicator; reduces noise from dev-only UI that can interact badly with some RSC trees.
     devIndicators: false,
     webpack(config) {

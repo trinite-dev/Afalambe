@@ -6,6 +6,9 @@ import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useLayoutEffect, useState, type ReactElement } from 'react';
 
+import { useUiLocale } from '@/hooks/use-ui-locale';
+import { COMMON_UI } from '@/lib/ui-locale';
+
 export type ThemeToggleProps = {
     className?: string;
 };
@@ -15,6 +18,8 @@ export type ThemeToggleProps = {
  */
 export function ThemeToggle({ className }: ThemeToggleProps): ReactElement {
     const { resolvedTheme, setTheme } = useTheme();
+    const { locale } = useUiLocale();
+    const common = COMMON_UI[locale];
     const [mounted, setMounted] = useState(false);
 
     useLayoutEffect(() => {
@@ -44,7 +49,7 @@ export function ThemeToggle({ className }: ThemeToggleProps): ReactElement {
             variant="ghost"
             size="icon"
             className={className}
-            aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
+            aria-label={isDark ? common.themeLightAria : common.themeDarkAria}
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
         >
             {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}

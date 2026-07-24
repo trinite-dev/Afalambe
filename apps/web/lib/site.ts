@@ -1,3 +1,5 @@
+import type { UiLocale } from '@/lib/ui-locale';
+
 export const siteName = 'Afalambe'
 
 /** Served from `public/` (literal `@` in filename). */
@@ -13,17 +15,39 @@ export const siteLogoDarkPath = '/@afalambe-logo-dark.png'
 export const siteHeroImagePath = '/@afalambe-hero.png'
 
 export const siteDefaultDescription =
-    'Soumettez des dossiers dans votre langue, y compris le fula et le peul. Quand le systeme peut verifier avec des sources selectionnees, vous obtenez une reponse claire ; sinon votre dossier est place en file d’attente pour verification humaine.'
+    "Soumettez des dossiers dans votre langue, y compris le fula et le peul. Quand le systeme peut verifier avec des sources selectionnees, vous obtenez une reponse claire ; sinon votre dossier est place en file d'attente pour verification humaine."
 
-export const siteKeywords = [
-    'verification des faits',
-    'verification des dossiers',
-    'Fula',
-    'Peul',
-    'verification par IA',
-    'verification humaine',
-    'multilingue',
-]
+export const siteDescriptions: Record<UiLocale, string> = {
+    fr: siteDefaultDescription,
+    en: 'Submit claims in your language, including Fula and Peul. When the system can verify against selected sources, you get a clear answer; otherwise your claim is queued for human review.',
+};
+
+export function getSiteDescription(locale: UiLocale): string {
+    return siteDescriptions[locale];
+}
+
+export const siteKeywordsByLocale: Record<UiLocale, string[]> = {
+    fr: [
+        'verification des faits',
+        'verification des dossiers',
+        'Fula',
+        'Peul',
+        'verification par IA',
+        'verification humaine',
+        'multilingue',
+    ],
+    en: [
+        'fact checking',
+        'claim verification',
+        'Fula',
+        'Peul',
+        'AI verification',
+        'human review',
+        'multilingual',
+    ],
+};
+
+export const siteKeywords = siteKeywordsByLocale.fr;
 
 /** Browser chrome / PWA theme (brand red from Afalambe identity). */
 export const siteThemeColor = '#9B1B30'
@@ -44,8 +68,10 @@ export function buildJsonLd(overrides?: {
     name?: string
     description?: string
     url?: string
+    inLanguage?: UiLocale | UiLocale[]
 }): Record<string, unknown> {
     const base = getMetadataBase().toString().replace(/\/$/, '')
+    const inLanguage = overrides?.inLanguage ?? ['fr', 'en']
     return {
         '@context': 'https://schema.org',
         '@type': 'WebApplication',
@@ -54,7 +80,7 @@ export function buildJsonLd(overrides?: {
         url: overrides?.url ?? base,
         applicationCategory: 'UtilitiesApplication',
         operatingSystem: 'Any',
-        inLanguage: ['fr', 'en'],
+        inLanguage,
         offers: {
             '@type': 'Offer',
             price: '0',

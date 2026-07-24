@@ -13,6 +13,8 @@ import {
     InputGroupAddon,
     InputGroupInput,
 } from '@afalambe/ui/components/input-group';
+import { useUiLocale } from '@/hooks/use-ui-locale';
+import { AUTH_MESSAGES } from '@/lib/ui-locale';
 
 export type PasswordInputWithToggleProps = {
     id: string;
@@ -20,6 +22,8 @@ export type PasswordInputWithToggleProps = {
     autoComplete?: string;
     required?: boolean;
     'aria-invalid'?: boolean | 'false' | 'true';
+    showPasswordAria?: string;
+    hidePasswordAria?: string;
 };
 
 /**
@@ -31,7 +35,11 @@ export function PasswordInputWithToggle({
     autoComplete,
     required,
     'aria-invalid': ariaInvalid,
+    showPasswordAria,
+    hidePasswordAria,
 }: PasswordInputWithToggleProps): ReactElement {
+    const { locale } = useUiLocale();
+    const messages = AUTH_MESSAGES[locale];
     const [visible, setVisible] = useState(false);
 
     const handleToggleMouseDown = useCallback((e: MouseEvent) => {
@@ -54,7 +62,11 @@ export function PasswordInputWithToggle({
                     variant="ghost"
                     size="icon-sm"
                     className="shrink-0 text-muted-foreground hover:text-foreground"
-                    aria-label={visible ? 'Hide password' : 'Show password'}
+                    aria-label={
+                        visible
+                            ? (hidePasswordAria ?? messages.hidePasswordAria)
+                            : (showPasswordAria ?? messages.showPasswordAria)
+                    }
                     aria-pressed={visible}
                     onMouseDown={handleToggleMouseDown}
                     onClick={() => setVisible((v) => !v)}

@@ -1,11 +1,13 @@
 'use client';
 
 import { useCallback, useState, type FormEvent, type ReactElement } from 'react';
-import { useRouter } from 'next/navigation';
 import { RefreshCw, ShieldCheck } from 'lucide-react';
 import { Button } from '@afalambe/ui/components/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@afalambe/ui/components/input-otp';
+import { useUiLocale } from '@/hooks/use-ui-locale';
+import { useLocalizedNavigation } from '@/hooks/use-localized-navigation';
 import { notifyApiError, notifyApiInfo } from '@/lib/api-toast';
+import { VERIFY_MESSAGES } from '@/lib/ui-locale';
 import { trpc } from '@/lib/trpc';
 
 export type VerifyEmailFormProps = {
@@ -15,7 +17,9 @@ export type VerifyEmailFormProps = {
 const OTP_LENGTH = 6;
 
 export function VerifyEmailForm({ email }: VerifyEmailFormProps): ReactElement {
-    const router = useRouter();
+    const { push } = useLocalizedNavigation();
+    const { locale } = useUiLocale();
+    const messages = VERIFY_MESSAGES[locale];
     const verifyMutation = trpc.auth.verifyEmail.useMutation();
     const resendMutation = trpc.auth.resendVerification.useMutation();
     const [otp, setOtp] = useState('');
@@ -25,8 +29,8 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps): ReactElement {
             event.preventDefault();
             if (!email) {
                 notifyApiError({
-                    title: 'E-mail manquant',
-                    description: "Ouvrez cette page depuis l'inscription pour verifier votre compte.",
+                    title: messages.missingEmailTitle,
+                    description: messages.missingEmailDescription,
                 });
                 return;
             }
@@ -35,21 +39,21 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps): ReactElement {
                 {
                     onSuccess: () => {
                         notifyApiInfo({
-                            title: 'E-mail verifie',
-                            description: 'Votre compte est maintenant verifie.',
+                            title: messages.verifiedTitle,
+                            description: messages.verifiedDescription,
                         });
-                        router.push('/chat');
+                        push('/chat');
                     },
                     onError: (error) => {
                         notifyApiError({
-                            title: 'Verification impossible',
+                            title: messages.verifyFailedTitle,
                             description: error.message,
                         });
                     },
                 },
             );
         },
-        [email, otp, router, verifyMutation],
+        [email, messages, otp, push, verifyMutation],
     );
 
     const handleResend = useCallback(() => {
@@ -57,25 +61,23 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps): ReactElement {
         resendMutation.mutate(undefined, {
             onSuccess: () => {
                 notifyApiInfo({
-                    title: 'E-mail de verification envoye',
-                    description: 'Consultez votre boite de reception pour un nouveau code a 6 chiffres.',
+                    title: messages.resendSuccessTitle,
+                    description: messages.resendSuccessDescription,
                 });
             },
             onError: (error) => {
                 notifyApiError({
-                    title: 'Renvoi de verification impossible',
+                    title: messages.resendFailedTitle,
                     description: error.message,
                 });
             },
         });
-    }, [resendMutation]);
+    }, [messages, resendMutation]);
 
     return (
         <form onSubmit={handleSubmit} className="flex w-full flex-col items-center gap-6">
             <p className="text-center text-[length:0.875rem] leading-relaxed text-[var(--lp-fg-muted)]">
-                {email
-                    ? `Saisissez le code a 6 chiffres envoye a ${email}.`
-                    : "Aucun e-mail n'a ete fourni. Vous pouvez demander un nouveau code ci-dessous."}
+                {email ? messages.promptWithEmail(email) : messages.promptWithoutEmail}
             </p>
 
             <InputOTP maxLength={OTP_LENGTH} value={otp} onChange={setOtp}>
@@ -86,13 +88,18 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps): ReactElement {
                 </InputOTPGroup>
             </InputOTP>
 
-            <Button type="submit" loading={verifyMutation.isPending} disabled={otp.length !== OTP_LENGTH} className="w-full">
+            <Button
+                type="submit"
+                loading={verifyMutation.isPending}
+                disabled={otp.length !== OTP_LENGTH}
+                className="w-full"
+            >
                 <ShieldCheck className="size-4 opacity-90" />
-                Verifier
+                {messages.verifyButton}
             </Button>
 
             <div className="flex flex-wrap items-center justify-center gap-x-1 text-center text-[length:0.8125rem] text-[var(--lp-fg-muted)]">
-                <span>Besoin d&apos;un nouvel e-mail de verification ?</span>
+                <span>{messages.resendPrompt}</span>
                 <Button
                     type="button"
                     variant="link"
@@ -102,7 +109,7 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps): ReactElement {
                     className="inline-flex h-auto min-h-0 gap-1.5 px-1 py-0 text-[var(--lp-accent)]"
                 >
                     <RefreshCw className="size-3.5 shrink-0" />
-                    Renvoyer
+                    {messages.resendButton}
                 </Button>
             </div>
         </form>
