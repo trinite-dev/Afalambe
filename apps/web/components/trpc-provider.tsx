@@ -6,7 +6,17 @@ import { httpBatchLink } from '@trpc/client';
 import { trpc } from '@/lib/trpc';
 import { fetchWithRetry } from '@/lib/fetch-with-retry';
 
-const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000').replace(/\/$/, '');
+/**
+ * Same-origin `/api/trpc` by default (feat-0047).
+ * Set `NEXT_PUBLIC_API_URL` to dual-run against standalone `apps/api`.
+ */
+function resolveTrpcHttpUrl(): string {
+    const override = process.env.NEXT_PUBLIC_API_URL?.trim();
+    if (override) {
+        return `${override.replace(/\/$/, '')}/trpc`;
+    }
+    return '/api/trpc';
+}
 
 export function TrpcProvider({ children }: { children: ReactNode }) {
     const [queryClient] = useState(() => new QueryClient());
@@ -14,7 +24,7 @@ export function TrpcProvider({ children }: { children: ReactNode }) {
         trpc.createClient({
             links: [
                 httpBatchLink({
-                    url: `${apiUrl}/trpc`,
+                    url: resolveTrpcHttpUrl(),
                     fetch(url, options) {
                         return fetchWithRetry(url, {
                             ...options,

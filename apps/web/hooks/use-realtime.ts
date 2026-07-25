@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useRef } from 'react';
+'use client';
+
+import { useEffect, useRef, useCallback } from 'react';
 
 interface WSMessage {
   type: string;
@@ -10,6 +12,8 @@ interface WSMessage {
 interface UseRealtimeOptions {
   claimId: string | null;
   enabled: boolean;
+  /** When true, poll instead of waiting only for WS (also used when no standalone API). */
+  isGenerating?: boolean;
   onMessage?: (payload: Record<string, unknown>) => void;
   onStatusChange?: (payload: Record<string, unknown>) => void;
   onTypingChange?: (isTyping: boolean) => void;
@@ -22,6 +26,13 @@ const RECONNECT_CONFIG = {
   backoffMultiplier: 2,
 } as const;
 
+const POLL_INTERVAL_MS = 2_500;
+
+/** Dual-run: WS against standalone API. Same-origin Next backend: polling only. */
+function useStandaloneWs(): boolean {
+  return Boolean(process.env.NEXT_PUBLIC_API_URL?.trim());
+}
+
 function getWsUrl(): string {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
   try {
@@ -31,13 +42,19 @@ function getWsUrl(): string {
   } catch {
     const protocol =
       typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${protocol}//localhost:4000/ws`;
+    return `${protocol}//localhost:4000`;
   }
 }
 
+/**
+ * Realtime for claim threads.
+ * - Standalone API (`NEXT_PUBLIC_API_URL`): WebSocket (feat-0009).
+ * - Same-origin / Vercel (feat-0047): poll via invalidate callbacks.
+ */
 export function useRealtime({
   claimId,
   enabled,
+  isGenerating = false,
   onMessage,
   onStatusChange,
   onTypingChange,
@@ -47,9 +64,50 @@ export function useRealtime({
   const lastSeqRef = useRef(0);
   const reconnectAttemptRef = useRef(0);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const standalone = useStandaloneWs();
 
+  const onMessageRef = useRef(onMessage);
+  const onStatusChangeRef = useRef(onStatusChange);
+  const onTypingChangeRef = useRef(onTypingChange);
+  const onGapDetectedRef = useRef(onGapDetected);
+  onMessageRef.current = onMessage;
+  onStatusChangeRef.current = onStatusChange;
+  onTypingChangeRef.current = onTypingChange;
+  onGapDetectedRef.current = onGapDetected;
+
+  // --- Polling path (same-origin / no WS host) ---
+  useEffect(() => {
+    if (standalone || !enabled || !claimId) return;
+
+    const tick = () => {
+      onMessageRef.current?.({});
+      onStatusChangeRef.current?.({});
+    };
+
+    // Always poll lightly while a thread is open; faster while generating.
+    const intervalMs = isGenerating ? POLL_INTERVAL_MS : POLL_INTERVAL_MS * 2;
+    const id = setInterval(tick, intervalMs);
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') tick();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      clearInterval(id);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [standalone, enabled, claimId, isGenerating]);
+
+  // Local typing from mutation pending (no server typing without WS)
+  useEffect(() => {
+    if (standalone) return;
+    onTypingChangeRef.current?.(isGenerating);
+  }, [standalone, isGenerating]);
+
+  // --- WebSocket path (dual-run standalone API) ---
   const connect = useCallback(() => {
-    if (!enabled) return;
+    if (!standalone || !enabled) return;
 
     try {
       const ws = new WebSocket(getWsUrl());
@@ -63,76 +121,58 @@ export function useRealtime({
 
       ws.onmessage = (event) => {
         try {
-          const msg: WSMessage = JSON.parse(event.data as string);
-
-          if (msg.seq !== undefined) {
+          const msg = JSON.parse(event.data as string) as WSMessage;
+          if (typeof msg.seq === 'number') {
             if (lastSeqRef.current > 0 && msg.seq > lastSeqRef.current + 1) {
-              onGapDetected?.();
+              onGapDetectedRef.current?.();
             }
             lastSeqRef.current = msg.seq;
           }
-
-          switch (msg.type) {
-            case 'message.created':
-              onMessage?.(msg.payload);
-              break;
-            case 'claim.statusChanged':
-              onStatusChange?.(msg.payload);
-              break;
-            case 'typing.start':
-              onTypingChange?.(true);
-              break;
-            case 'typing.stop':
-              onTypingChange?.(false);
-              break;
+          if (msg.type === 'message') onMessageRef.current?.(msg.payload);
+          if (msg.type === 'status') onStatusChangeRef.current?.(msg.payload);
+          if (msg.type === 'typing') {
+            onTypingChangeRef.current?.(Boolean(msg.payload.isTyping));
           }
         } catch {
-          // ignore malformed messages
+          // ignore malformed
         }
       };
 
       ws.onclose = () => {
         wsRef.current = null;
-        scheduleReconnect();
-      };
-
-      ws.onerror = () => {
-        ws.close();
+        if (!enabled) return;
+        const delay = Math.min(
+          RECONNECT_CONFIG.baseDelay *
+            RECONNECT_CONFIG.backoffMultiplier ** reconnectAttemptRef.current,
+          RECONNECT_CONFIG.maxDelay,
+        );
+        reconnectAttemptRef.current += 1;
+        reconnectTimerRef.current = setTimeout(connect, delay);
       };
 
       wsRef.current = ws;
     } catch {
-      scheduleReconnect();
+      // ignore
     }
-  }, [claimId, enabled, onMessage, onStatusChange, onTypingChange, onGapDetected]);
-
-  const scheduleReconnect = useCallback(() => {
-    if (!enabled) return;
-    const attempt = reconnectAttemptRef.current;
-    const delay = Math.min(
-      RECONNECT_CONFIG.baseDelay * Math.pow(RECONNECT_CONFIG.backoffMultiplier, attempt),
-      RECONNECT_CONFIG.maxDelay,
-    );
-    const jitter = delay * 0.2 * (Math.random() * 2 - 1);
-    reconnectAttemptRef.current = attempt + 1;
-    reconnectTimerRef.current = setTimeout(connect, delay + jitter);
-  }, [connect, enabled]);
+  }, [standalone, enabled, claimId]);
 
   useEffect(() => {
+    if (!standalone) return;
+
     connect();
     return () => {
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
-      wsRef.current?.close();
-      wsRef.current = null;
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
     };
-  }, [connect]);
+  }, [standalone, connect]);
 
   useEffect(() => {
-    const ws = wsRef.current;
-    if (!ws || ws.readyState !== WebSocket.OPEN) return;
-
-    if (claimId) {
-      ws.send(JSON.stringify({ type: 'subscribe', payload: { claimIds: [claimId] } }));
+    if (!standalone || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN || !claimId) {
+      return;
     }
-  }, [claimId]);
+    wsRef.current.send(JSON.stringify({ type: 'subscribe', payload: { claimIds: [claimId] } }));
+  }, [standalone, claimId]);
 }

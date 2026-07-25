@@ -205,7 +205,14 @@ export function ChatPageClient({
     );
     const threadQuery = trpc.claim.byId.useQuery(
         { claimId: activeThreadId ?? '' },
-        { enabled: Boolean(activeThreadId) },
+        {
+            enabled: Boolean(activeThreadId),
+            refetchInterval: (query) => {
+                const status = query.state.data?.status;
+                if (status === 'PROCESSING') return 2_500;
+                return false;
+            },
+        },
     );
     const createClaim = trpc.claim.create.useMutation();
     const appendMessage = trpc.claim.appendUserMessage.useMutation();
@@ -307,6 +314,7 @@ export function ChatPageClient({
     useRealtime({
         claimId: activeThreadId,
         enabled: Boolean(activeThreadId),
+        isGenerating: generateAssistantReply.isPending,
         onMessage: () => {
             if (activeThreadId) void trpcUtils.claim.byId.invalidate({ claimId: activeThreadId });
         },
