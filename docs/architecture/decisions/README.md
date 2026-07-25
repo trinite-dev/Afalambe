@@ -17,3 +17,4 @@ This folder stores architecture decisions for the project.
 - ADR-0004 Data Access Conventions
 - ADR-0005 Email Delivery (Resend)
 - ADR-0006 Testing Strategy
+- ADR-0007 Single Vercel deploy (backend inside Next.js) — **accepted** ([feat-0047](../../../specs/feat-0047/PRODUCT.md))

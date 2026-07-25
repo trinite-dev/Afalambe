@@ -62,6 +62,7 @@ Each row links PRODUCT + TECH. Status reflects codebase as of spec authoring.
 | 0044 | Static chat sidebar, scrollable main | [PRODUCT](./feat-0044/PRODUCT.md) | [TECH](./feat-0044/TECH.md) | Implemented |
 | 0045 | Signup verification email delivery | [PRODUCT](./feat-0045/PRODUCT.md) | [TECH](./feat-0045/TECH.md) | Implemented |
 | 0046 | Core hardening + TruthSentry ops parity | [PRODUCT](./feat-0046/PRODUCT.md) | [TECH](./feat-0046/TECH.md) | Implemented |
+| 0047 | Single Vercel deploy (“one deploy”) | [PRODUCT](./feat-0047/PRODUCT.md) | [TECH](./feat-0047/TECH.md) | Done (1–3a) |
 
 ## Critical path (core product)
 
@@ -92,6 +93,7 @@ feat-0033 (ops) + feat-0027 (env) + feat-0022 (DB)
 | [feat-0044](./feat-0044/PRODUCT.md) | Static chat sidebar; main content scrolls independently |
 | [feat-0045](./feat-0045/PRODUCT.md) | Signup verification email delivery reliability |
 | [feat-0046](./feat-0046/PRODUCT.md) | Core loop hardening, admin resolve parity, port 3002 / migrate baseline |
+| [feat-0047](./feat-0047/PRODUCT.md) | One Vercel deploy: tRPC/webhooks/cron inside Next.js; retire standalone API |
 | [feat-0030](./feat-0030/PRODUCT.md) | Verdicts, status machine, email trigger truth |
 | [feat-0031](./feat-0031/PRODUCT.md) | AI phases (replaces reading full AI_CHATBOT_SPEC for planning) |
 | [feat-0032](./feat-0032/PRODUCT.md) | Auto-scroll, copy, composer limits |
