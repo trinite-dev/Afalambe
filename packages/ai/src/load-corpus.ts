@@ -10,11 +10,18 @@ let cachedEntries: FactCheckCorpusEntry[] | null = null;
 let cachedPath: string | null = null;
 
 function candidatePaths(): string[] {
+    const fromEnv = process.env.FACT_CHECK_CORPUS_PATH?.trim();
     const here = dirname(fileURLToPath(import.meta.url));
     const fromPackage = resolve(here, '..', '..', '..', CORPUS_RELATIVE);
     const fromCwd = resolve(process.cwd(), CORPUS_RELATIVE);
     const fromCwdUp = resolve(process.cwd(), '..', '..', CORPUS_RELATIVE);
-    return [fromPackage, fromCwd, fromCwdUp, resolve(process.cwd(), '..', CORPUS_RELATIVE)];
+    return [
+        ...(fromEnv ? [resolve(fromEnv)] : []),
+        fromPackage,
+        fromCwd,
+        fromCwdUp,
+        resolve(process.cwd(), '..', CORPUS_RELATIVE),
+    ];
 }
 
 export function resolveCorpusPath(explicitPath?: string): string {

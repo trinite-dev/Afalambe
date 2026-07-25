@@ -1,0 +1,27 @@
+{
+    "name": "@afalambe/api-runtime",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "build": "tsc --noEmit",
+        "lint": "tsc --noEmit",
+        "typecheck": "tsc --noEmit",
+        "test": "tsx --test src/*.test.ts"
+    },
+    "dependencies": {
+        "@afalambe/ai": "workspace:*",
+        "@afalambe/emails": "workspace:*",
+        "@afalambe/prisma": "workspace:*",
+        "@afalambe/trpc": "workspace:*",
+        "@supabase/supabase-js": "^2.49.8"
+    },
+    "devDependencies": {
+        "@types/node": "^22.10.2",
+        "tsx": "^4.20.6",
+        "typescript": "^5.9.2"
+    }
+}
