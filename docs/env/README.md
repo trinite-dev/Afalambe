@@ -2,29 +2,57 @@
 
 This document defines required environment variables by runtime.
 
-## apps/web
+## apps/web (single-deploy / feat-0047)
 
-- `NEXT_PUBLIC_APP_URL`: public application URL
-- `NEXT_PUBLIC_API_URL`: API endpoint used by web client
+Same-origin mode: **omit** `NEXT_PUBLIC_API_URL`. Server secrets live on the Vercel project (or in `apps/web/.env` locally).
 
-## apps/api
+### Public
 
-- `API_PORT`: server port
-- `DATABASE_URL`: Postgres connection string
-- `SUPABASE_URL`: Supabase project URL
-- `SUPABASE_ANON_KEY`: Supabase anon key
-- `SUPABASE_SERVICE_ROLE_KEY`: Supabase service role key
-- `SUPABASE_STORAGE_BUCKET_CHAT_UPLOADS`: storage bucket for chat image uploads
-- `CHAT_IMAGE_MAX_BYTES`: max image upload size in bytes
-- `CHAT_ALLOWED_IMAGE_MIME_TYPES`: comma-separated allowlist for image mimes
-- `AUTH_SECRET`: documented in templates; **unused in application code** (see [feat-0027](../feat-0027/PRODUCT.md))
-- `AUTH_COOKIE_NAME`: HTTP-only session cookie name
-- `AUTH_COOKIE_SECURE`: set `true` in production
-- `RESEND_API_KEY`: Resend API key for transactional sends
-- `EMAIL_FROM`: verified sender address for transactional sends. Must use a domain verified in Resend for production. For local sandbox only, `beth.t@example.com` (recipient restrictions apply).
-- `EMAIL_DEV_LOG_OTP`: when `true` and not production, log verification OTP to the API console if Resend fails
-- `EMAIL_DEV_EXPOSE_OTP`: when `true` and not production, include `devOtp` on register response (local UI only; never enable in production)
-- `RESEND_WEBHOOK_SIGNING_SECRET`: shared secret used to verify Resend webhook requests
+- `NEXT_PUBLIC_APP_URL`: public application URL (email links, canonical origin)
+- `NEXT_PUBLIC_API_URL`: **optional dual-run only** — when set, client talks to standalone `apps/api` (`…/trpc` + WebSocket). When unset, client uses `/api/trpc` and polling.
+- `NEXT_PUBLIC_DEMO_ENABLED`: optional; set `false` to disable `/demo`
+- `NEXT_PUBLIC_CHAT_IMAGE_MAX_BYTES`: optional client-side image size mirror
+
+### Server (required for `/api/trpc`, webhooks, cron)
+
+Same set as former `apps/api` secrets:
+
+- `DATABASE_URL`: Postgres pooler URL
+- `DIRECT_URL`: direct URL for migrations (CI / one-off)
+- `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_STORAGE_BUCKET_CHAT_UPLOADS`
+- `CHAT_IMAGE_MAX_BYTES`, `CHAT_ALLOWED_IMAGE_MIME_TYPES`
+- `AUTH_COOKIE_NAME`, `AUTH_COOKIE_SECURE` (`true` in production)
+- `AUTH_SECRET`: documented in templates; **unused in application code**
+- `RESEND_API_KEY`, `EMAIL_FROM`, `RESEND_WEBHOOK_SIGNING_SECRET`
+- `AI_PROVIDER`, `AI_MODEL`, `AI_API_KEY`
+- `CRON_SECRET`: bearer for `/api/cron/cleanup-orphans`
+- `EMAIL_DEV_LOG_OTP` / `EMAIL_DEV_EXPOSE_OTP`: local only; never in production
+- `ORPHAN_CLEANUP_DISABLED`: optional escape hatch
+- `FACT_CHECK_CORPUS_PATH`: optional absolute path override for corpus.json
+- `RATE_LIMIT_DISABLED`: optional; default off in production
+
+### Routes on Next
+
+| Path | Purpose |
+|------|---------|
+| `/api/trpc/*` | tRPC |
+| `/api/webhooks/resend` | Resend delivery events |
+| `/api/cron/cleanup-orphans` | Hourly orphan cleanup (Vercel Cron) |
+| `/api/health` | Liveness |
+| `/api/ready` | DB readiness |
+
+### Supabase Storage CORS
+
+Allow `PUT`/`GET`/`HEAD` from your web origin (e.g. `https://your-domain` and local `http://localhost:3002`) on the chat-uploads bucket.
+
+## apps/api (dual-run / rollback)
+
+Keep until Phase 4 cutover is signed off. Same secrets as above, plus:
+
+- `API_PORT`: server port (default `4000`)
+- `CORS_ALLOWED_ORIGINS`: optional extra browser origins
+- `NEXT_PUBLIC_APP_URL`: used for email links and CORS allowlist
 
 ## packages/emails (Resend)
 
@@ -56,7 +84,10 @@ pnpm --filter @afalambe/prisma exec prisma migrate resolve --applied 20260401000
 
 ## Local web port
 
-Dev web is pinned to **http://localhost:3002** (`next dev -p 3002`). Set `NEXT_PUBLIC_APP_URL` accordingly in `apps/web/.env` and `apps/api/.env`. If Turbo still shows web as failed after a port change, restart `pnpm dev:all` and clear a stale `apps/web/.next` if duplicate Next processes fought over cache.
+Dev web is pinned to **http://localhost:3002** (`next dev -p 3002`). Set `NEXT_PUBLIC_APP_URL` accordingly.
+
+- **Same-origin (recommended):** copy server secrets into `apps/web/.env`, leave `NEXT_PUBLIC_API_URL` unset, run `pnpm dev:web`.
+- **Dual-run:** set `NEXT_PUBLIC_API_URL=http://localhost:4000` and run `pnpm dev:all`.
 
 ## AI pipeline
 

@@ -44,21 +44,15 @@ importers:
 
   apps/api:
     dependencies:
-      '@afalambe/ai':
+      '@afalambe/api-runtime':
         specifier: workspace:*
-        version: link:../../packages/ai
-      '@afalambe/emails':
-        specifier: workspace:*
-        version: link:../../packages/emails
+        version: link:../../packages/api-runtime
       '@afalambe/prisma':
         specifier: workspace:*
         version: link:../../packages/prisma
       '@afalambe/trpc':
         specifier: workspace:*
         version: link:../../packages/trpc
-      '@supabase/supabase-js':
-        specifier: ^2.49.8
-        version: 2.105.0
       '@trpc/server':
         specifier: ^11.7.1
         version: 11.16.0(typescript@5.9.3)
@@ -90,6 +84,15 @@ importers:
       '@afalambe/ai':
         specifier: workspace:*
         version: link:../../packages/ai
+      '@afalambe/api-runtime':
+        specifier: workspace:*
+        version: link:../../packages/api-runtime
+      '@afalambe/emails':
+        specifier: workspace:*
+        version: link:../../packages/emails
+      '@afalambe/prisma':
+        specifier: workspace:*
+        version: link:../../packages/prisma
       '@afalambe/trpc':
         specifier: workspace:*
         version: link:../../packages/trpc
@@ -105,6 +108,9 @@ importers:
       '@trpc/react-query':
         specifier: ^11.7.1
         version: 11.16.0(@tanstack/react-query@5.100.5(react@19.2.4))(@trpc/client@11.16.0(@trpc/server@11.16.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.16.0(typescript@5.9.3))(react@19.2.4)(typescript@5.9.3)
+      '@trpc/server':
+        specifier: ^11.7.1
+        version: 11.16.0(typescript@5.9.3)
       franc:
         specifier: ^6.2.0
         version: 6.2.0
@@ -200,6 +206,34 @@ importers:
   configs/typescript: {}
 
   packages/ai:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.19.17
+      tsx:
+        specifier: ^4.20.6
+        version: 4.21.0
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  packages/api-runtime:
+    dependencies:
+      '@afalambe/ai':
+        specifier: workspace:*
+        version: link:../ai
+      '@afalambe/emails':
+        specifier: workspace:*
+        version: link:../emails
+      '@afalambe/prisma':
+        specifier: workspace:*
+        version: link:../prisma
+      '@afalambe/trpc':
+        specifier: workspace:*
+        version: link:../trpc
+      '@supabase/supabase-js':
+        specifier: ^2.49.8
+        version: 2.105.0
     devDependencies:
       '@types/node':
         specifier: ^22.10.2
