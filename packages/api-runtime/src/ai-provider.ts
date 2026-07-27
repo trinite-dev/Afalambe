@@ -151,12 +151,15 @@ export async function generateProviderText(input: GenerateTextInput): Promise<st
 async function transcribeWithGemini(input: {
     audioBase64: string;
     mimeType: string;
-    language: string;
+    language?: string;
 }): Promise<string> {
     const key = requireAiApiKey();
     const model = resolveModel('gemini');
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 30_000);
+    const languageHint = input.language?.trim()
+        ? `Language hint: ${input.language.trim()}. `
+        : '';
 
     try {
         const response = await fetch(
@@ -173,7 +176,7 @@ async function transcribeWithGemini(input: {
                             role: 'user',
                             parts: [
                                 {
-                                    text: `Transcribe this audio. Language hint: ${input.language}. Return only the transcript text.`,
+                                    text: `Transcribe this audio. ${languageHint}Return only the transcript text.`,
                                 },
                                 {
                                     inlineData: {
@@ -211,7 +214,7 @@ async function transcribeWithGemini(input: {
 async function transcribeWithOpenAi(input: {
     audioBase64: string;
     mimeType: string;
-    language: string;
+    language?: string;
 }): Promise<string> {
     const key = requireAiApiKey();
     const audioBuffer = Buffer.from(input.audioBase64, 'base64');
@@ -232,7 +235,9 @@ async function transcribeWithOpenAi(input: {
     const formData = new FormData();
     formData.append('file', new Blob([audioBuffer], { type: input.mimeType }), `recording.${extension}`);
     formData.append('model', 'whisper-1');
-    formData.append('language', input.language);
+    if (input.language?.trim()) {
+        formData.append('language', input.language.trim());
+    }
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 30_000);
@@ -260,7 +265,7 @@ async function transcribeWithOpenAi(input: {
 export async function transcribeAudioWithProvider(input: {
     audioBase64: string;
     mimeType: string;
-    language: string;
+    language?: string;
 }): Promise<string> {
     const provider = resolveProvider();
     if (provider === 'gemini') {

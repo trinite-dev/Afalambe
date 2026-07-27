@@ -84,6 +84,6 @@ export type TrpcContext = {
     transcribeAudio?: (args: {
         audioBase64: string;
         mimeType: string;
-        language: string;
+        language?: string;
     }) => Promise<string>;
 };

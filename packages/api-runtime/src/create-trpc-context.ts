@@ -1,7 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import {
     formatEvidenceBlock,
+    getLanguageSystemPrompt,
     mergeEvidenceHits,
+    resolveClaimLanguage,
     retrieveFromCorpus,
     scoreDatabaseCandidate,
     significantTokensForDb,
@@ -157,11 +159,14 @@ export async function createTrpcContext(opts: CreateTrpcContextOptions): Promise
             const lastUserMessage = [...thread].reverse().find((m) => m.role === 'USER')?.content;
             const query = (lastUserMessage || claim.claimText || '').trim();
             const resolvedIntent: ChatMessageIntent = intent;
+            const languageBlock = getLanguageSystemPrompt(resolveClaimLanguage(claim.claimLanguage));
 
             if (resolvedIntent === 'META') {
-                const systemPrompt = `You are Afalambe's assistant. The user is asking about the product or about fact-checking in general — NOT submitting a claim to verify.
+                const systemPrompt = `${languageBlock}
 
-Explain clearly (French or English matching the user):
+You are Afalambe's assistant. The user is asking about the product or about fact-checking in general — NOT submitting a claim to verify.
+
+Explain clearly:
 - Afalambe helps people in Africa verify rumors and claims (WhatsApp, social media, politics, health, finance).
 - They should paste a specific claim or rumor to get a verification.
 - Do NOT invent a verdict (VERIFIED/DEBUNKED/etc.). Do NOT invent sources or images.
@@ -180,9 +185,11 @@ ${claimContext || 'No claim metadata yet.'}`;
             }
 
             if (resolvedIntent === 'OFF_TOPIC') {
-                const systemPrompt = `You are Afalambe's assistant. The user's message is not a claim to fact-check.
+                const systemPrompt = `${languageBlock}
 
-Politely redirect them to paste a rumor or claim they want verified (WhatsApp forward, social post, statement). Respond in the user's language (French or English). Do NOT invent a verdict or sources.`;
+You are Afalambe's assistant. The user's message is not a claim to fact-check.
+
+Politely redirect them to paste a rumor or claim they want verified (WhatsApp forward, social post, statement). Do NOT invent a verdict or sources.`;
 
                 return generateProviderText({
                     system: systemPrompt,
@@ -195,13 +202,14 @@ Politely redirect them to paste a rumor or claim they want verified (WhatsApp fo
             }
 
             if (resolvedIntent === 'FOLLOW_UP') {
-                const systemPrompt = `You are Afalambe's fact-checking assistant continuing an existing verification thread.
+                const systemPrompt = `${languageBlock}
+
+You are Afalambe's fact-checking assistant continuing an existing verification thread.
 
 The user is asking a follow-up or clarification about the prior analysis — not submitting a brand-new claim.
 - Answer using the conversation so far and the claim metadata below.
 - Do NOT issue a new verdict label (VERIFIED/DEBUNKED/MISLEADING/PARTIALLY_TRUE) unless the prior reply already established one and you are only explaining it.
 - Do NOT invent sources, evidence ids, or images.
-- Respond in the user's language.
 
 Claim metadata:
 ${claimContext || 'No metadata provided.'}`;
@@ -272,13 +280,15 @@ ${claimContext || 'No metadata provided.'}`;
 
             const evidenceBlock = formatEvidenceBlock(evidenceHits);
 
-            const systemPrompt = `You are a fact-checking assistant for Afalambe, helping users in Africa verify claims and combat misinformation. Your role:
+            const systemPrompt = `${languageBlock}
+
+You are a fact-checking assistant for Afalambe, helping users in Africa verify claims and combat misinformation. Your role:
 
 1. Analyze claims against known facts, context, and logical reasoning.
 2. Provide a clear verdict: VERIFIED, DEBUNKED, MISLEADING, or PARTIALLY_TRUE. If uncertain, say so explicitly.
 3. Cite reasoning and suggest where users can find authoritative sources.
 4. Be culturally aware of the African context (local politics, health campaigns, regional events). Prefer Guinean and West African cases when relevant.
-5. Respond in the same language as the claim when possible (French, Fula, or English).
+5. Stay in the claim language instructed above (French, Fula, or English).
 6. When approved evidence is provided below and matches the user claim, ground your answer in it and cite the evidence id (AFA-* or database claim id) or URL. Do not invent evidence ids.
 
 Claim metadata:

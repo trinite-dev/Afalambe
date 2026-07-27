@@ -402,15 +402,18 @@ export const claimRouter = createTRPCRouter({
                 mimeType: z
                     .enum(['audio/webm', 'audio/mp4', 'audio/mpeg', 'audio/wav', 'audio/ogg'])
                     .default('audio/webm'),
-                language: z.string().min(2).max(10).default('fr'),
+                language: z.string().min(2).max(10).optional(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
             await requireVerifiedEmail(ctx);
+            const preferEn = input.language === 'en';
             if (!ctx.transcribeAudio) {
                 throw new TRPCError({
                     code: 'INTERNAL_SERVER_ERROR',
-                    message: 'La transcription vocale est indisponible.',
+                    message: preferEn
+                        ? 'Voice transcription is unavailable.'
+                        : 'La transcription vocale est indisponible.',
                 });
             }
 
@@ -428,7 +431,9 @@ export const claimRouter = createTRPCRouter({
                 });
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
-                    message: 'Impossible de transcrire l audio.',
+                    message: preferEn
+                        ? 'Could not transcribe the audio.'
+                        : 'Impossible de transcrire l audio.',
                 });
             }
         }),
