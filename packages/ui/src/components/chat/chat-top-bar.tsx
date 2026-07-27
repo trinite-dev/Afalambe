@@ -25,7 +25,7 @@ export function ChatTopBar({
     brandLogoAlt,
     className,
     trailing,
-    moreOptionsAria = "Plus d'options",
+    moreOptionsAria = 'More options',
 }: ChatTopBarProps): React.ReactElement {
     return (
         <header

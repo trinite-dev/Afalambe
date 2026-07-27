@@ -48,7 +48,7 @@ export function LandingSiteHeader({
     chatNavHref,
     chatNavLabel = 'Chat',
     signInHref,
-    signInLabel = 'Connexion',
+    signInLabel = 'Sign in',
     primaryCtaHref,
     primaryCtaLabel,
     className,

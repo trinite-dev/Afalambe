@@ -30,16 +30,16 @@ export type ChatSidebarLabels = {
 };
 
 const defaultLabels: ChatSidebarLabels = {
-    expandSidebarAria: 'Developper la barre laterale',
-    collapseSidebarAria: 'Reduire la barre laterale',
-    newChat: 'Nouveau chat',
-    searchChatsPlaceholder: 'Rechercher des chats',
-    chatHistoryAria: 'Historique des chats',
-    renameThread: 'Renommer',
-    deleteThread: 'Supprimer',
-    threadActionsAria: 'Actions du chat',
-    loadMoreChats: 'Charger plus',
-    loadingThreads: 'Chargement...',
+    expandSidebarAria: 'Expand sidebar',
+    collapseSidebarAria: 'Collapse sidebar',
+    newChat: 'New chat',
+    searchChatsPlaceholder: 'Search chats',
+    chatHistoryAria: 'Chat history',
+    renameThread: 'Rename',
+    deleteThread: 'Delete',
+    threadActionsAria: 'Chat actions',
+    loadMoreChats: 'Load more',
+    loadingThreads: 'Loading…',
 };
 
 export type ChatSidebarProps = {
