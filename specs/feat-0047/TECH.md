@@ -111,7 +111,7 @@ Suggested `apps/web/vercel.json`:
   "crons": [
     {
       "path": "/api/cron/cleanup-orphans",
-      "schedule": "0 * * * *"
+      "schedule": "0 3 * * *"
     }
   ]
 }

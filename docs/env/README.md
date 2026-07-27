@@ -38,7 +38,7 @@ Same set as former `apps/api` secrets:
 |------|---------|
 | `/api/trpc/*` | tRPC |
 | `/api/webhooks/resend` | Resend delivery events |
-| `/api/cron/cleanup-orphans` | Hourly orphan cleanup (Vercel Cron) |
+| `/api/cron/cleanup-orphans` | Daily orphan cleanup (Vercel Cron `0 3 * * *` UTC). Hobby allows **once per day** only; Pro can use hourly. |
 | `/api/health` | Liveness |
 | `/api/ready` | DB readiness |
 

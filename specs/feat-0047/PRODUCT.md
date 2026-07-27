@@ -81,7 +81,7 @@ These are the **recommended defaults** for Afalambe one-deploy. Change only with
 | **Realtime MVP** | **Option A — polling / query invalidate** | No second host; good enough for claim threads |
 | **Realtime Phase 3b** | **Option B — Supabase Realtime** (recommended follow-up) | Near-WS UX without a custom WS server |
 | **Typing indicator** | Local `isPending` during mutations; no server typing | Honest UX without WS |
-| **Orphan cleanup** | **Vercel Cron** hourly + `CRON_SECRET` | Replaces in-process interval |
+| **Orphan cleanup** | **Vercel Cron** daily (`0 3 * * *` UTC) + `CRON_SECRET` on Hobby; hourly OK on Pro | Replaces in-process interval |
 | **Health** | Ship `/api/health` (process) + recommended `/api/ready` (DB ping) | Ops / uptime monitors |
 | **Uploads** | Keep **signed PUT to Supabase** (never proxy file bytes through Vercel) | Avoid body-size and timeout traps |
 | **AI** | Sync `generateAssistantReply` with elevated `maxDuration`; on timeout → soft fail / human queue | Matches [feat-0030](../feat-0030/PRODUCT.md) |
@@ -125,7 +125,7 @@ Today: hourly `setInterval` in `apps/api` ([feat-0010](../feat-0010/PRODUCT.md))
 | **Vercel Cron** → `/api/cron/cleanup-orphans` | **Chosen (required)** — secured with `CRON_SECRET` |
 | Defer cleanup | Only with explicit `ORPHAN_CLEANUP_DISABLED=true` and operator acknowledgement |
 
-**Recommended schedule:** `0 * * * *` (hourly), same intent as current interval.
+**Recommended schedule:** `0 3 * * *` (daily 03:00 UTC) so **Vercel Hobby** accepts the cron. On Pro, hourly `0 * * * *` is fine and closer to the old API `setInterval`.
 
 ## Use case catalog
 
