@@ -93,10 +93,10 @@ Dev web is pinned to **http://localhost:3002** (`next dev -p 3002`). Set `NEXT_P
 
 - `AI_PROVIDER`: `openai` (default) or `gemini` / `google`
 - `AI_MODEL`: model name/version (`gpt-4.1-mini` for OpenAI, `gemini-flash-latest` for Gemini)
-- `AI_API_KEY`: provider API key (server only; used by `claim.generateAssistantReply`, metadata extraction, and transcription)
-- `NEXT_PUBLIC_OPENAI_API_KEY`: **not used** — voice transcription is proxied via API (`claim.transcribeAudio`) with server `AI_API_KEY` ([feat-0015](../../specs/feat-0015/PRODUCT.md))
+- `AI_API_KEY`: provider API key (**server only** — used by `claim.generateAssistantReply`, metadata extraction, and `claim.transcribeAudio`)
+- **Never** set `NEXT_PUBLIC_OPENAI_API_KEY` or any browser-exposed AI key. Voice stays on the server ([feat-0015](../../specs/feat-0015/PRODUCT.md), [feat-0048](../../specs/feat-0048/PRODUCT.md)).
 
-When `AI_PROVIDER=gemini`, chat and metadata use Google Generative Language `generateContent`. Transcription uses Gemini multimodal audio.
+When `AI_PROVIDER=gemini`, chat and metadata use Google Generative Language `generateContent`. Transcription uses Gemini multimodal audio. Whisper language follows UI locale / claim text; Fula uses auto-detect.
 
 ## Notes
 

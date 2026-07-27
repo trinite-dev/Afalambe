@@ -1,11 +1,16 @@
 import { getCorpusPromptSuggestions } from '@/lib/home-examples';
+import {
+    getLanguageSystemPrompt,
+    LANGUAGE_SYSTEM_PROMPTS,
+    type ClaimLanguage,
+} from '@afalambe/ai/claim-language';
 
 /**
  * Language Configuration for Afalambe Fact-Checking Platform
  * Supports: French, Fula/Peul, English
  */
 
-export type SupportedLanguage = 'fr' | 'ff' | 'en';
+export type SupportedLanguage = ClaimLanguage;
 
 export const LANGUAGES: Record<SupportedLanguage, { name: string; label: string; code: string }> = {
   fr: { name: 'French', label: 'Francais', code: 'fr' },
@@ -15,31 +20,7 @@ export const LANGUAGES: Record<SupportedLanguage, { name: string; label: string;
 
 export const DEFAULT_LANGUAGE: SupportedLanguage = 'fr';
 
-export const LANGUAGE_SYSTEM_PROMPTS: Record<SupportedLanguage, string> = {
-  fr: [
-    'Tu es un assistant de verification des faits pour la plateforme Afalambe.',
-    'Reponds toujours en francais.',
-    'Analyse les affirmations de maniere factuelle et rigoureuse.',
-    'Cite tes sources quand c\'est possible.',
-    'Indique clairement ton niveau de certitude : verifie, dementi, trompeur ou partiellement vrai.',
-    'Si tu ne peux pas verifier, dis-le explicitement.',
-  ].join(' '),
-  ff: [
-    'A on wallitooɗo ƴeewndagol goonga e fenaande dow Afalambe.',
-    'Jaabo e Pulaar/Fulfulde.',
-    'Ƴeewnu haalaaji ɗii e nuunɗal.',
-    'Hollu ɗo njiiɗaa humpito maa.',
-    'Haal fes so a waawaa ƴeewndaade haala kaa.',
-  ].join(' '),
-  en: [
-    'You are a fact-checking assistant for the Afalambe platform.',
-    'Always respond in English.',
-    'Analyze claims factually and rigorously.',
-    'Cite sources when possible.',
-    'Clearly state your confidence level: verified, debunked, misleading, or partially true.',
-    'If you cannot verify, say so explicitly.',
-  ].join(' '),
-};
+export { LANGUAGE_SYSTEM_PROMPTS };
 
 export const PROMPT_SUGGESTIONS: Record<SupportedLanguage, string[]> = {
   fr: getCorpusPromptSuggestions('fr'),
@@ -83,9 +64,9 @@ export const UI_LABELS: Record<SupportedLanguage, Record<string, string>> = {
   },
 };
 
-export const WHISPER_LANGUAGE_CODES: Record<SupportedLanguage, string> = {
+/** ISO codes accepted by Whisper when known; Fula is omitted at call sites (auto-detect). */
+export const WHISPER_LANGUAGE_CODES: Record<Exclude<SupportedLanguage, 'ff'>, string> = {
   fr: 'fr',
-  ff: 'ff',
   en: 'en',
 };
 
@@ -100,7 +81,7 @@ export const getLanguageName = (code: SupportedLanguage): string => {
 };
 
 export const getSystemPrompt = (language: SupportedLanguage): string => {
-  return LANGUAGE_SYSTEM_PROMPTS[language] || LANGUAGE_SYSTEM_PROMPTS.fr;
+  return getLanguageSystemPrompt(language);
 };
 
 export const getPromptSuggestions = (language: SupportedLanguage): string[] => {

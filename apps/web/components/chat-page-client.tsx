@@ -36,10 +36,11 @@ import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
 import { useMessageOutbox, type OutboxEntry } from '@/hooks/use-message-outbox';
 import { useOnlineStatus } from '@/hooks/use-online-status';
 import { useRealtime } from '@/hooks/use-realtime';
+import { whisperLanguageHint } from '@afalambe/ai/claim-language';
 import { useLocalizedNavigation } from '@/hooks/use-localized-navigation';
 import { useUiLocale } from '@/hooks/use-ui-locale';
 import { detectLanguageFromText } from '@/lib/language-detection';
-import { WHISPER_LANGUAGE_CODES, getPromptSuggestions } from '@/lib/languages';
+import { getPromptSuggestions } from '@/lib/languages';
 import {
     clearAuthChatClientState,
     getActiveClaimId,
@@ -50,9 +51,12 @@ import { CHAT_CLAIM_LABELS, CHAT_HOME_UI, CHAT_TOASTS, CHAT_UI, getChatUILabel, 
 
 const COMPOSER_MAX_CHARS = 4000;
 
-function whisperLanguageCode(text: string): string {
-    const detected = text.trim() ? detectLanguageFromText(text) : 'fr';
-    return WHISPER_LANGUAGE_CODES[detected];
+function whisperLanguageCode(text: string, uiLocale: UiLocale): string | undefined {
+    return whisperLanguageHint({
+        composerText: text,
+        uiLocale,
+        detect: detectLanguageFromText,
+    });
 }
 
 async function blobToBase64(
@@ -289,7 +293,7 @@ export function ChatPageClient({
             const result = await transcribeAudioMutation.mutateAsync({
                 audioBase64,
                 mimeType: mimeType as 'audio/webm' | 'audio/mp4' | 'audio/mpeg' | 'audio/wav' | 'audio/ogg',
-                language: whisperLanguageCode(composer),
+                language: whisperLanguageCode(composer, locale),
             });
             return result.text;
         },
