@@ -29,7 +29,7 @@ Each row links PRODUCT + TECH. Status reflects codebase as of spec authoring.
 | 0012 | Resend webhook | [PRODUCT](./feat-0012/PRODUCT.md) | [TECH](./feat-0012/TECH.md) | Implemented |
 | 0013 | Offline message outbox | [PRODUCT](./feat-0013/PRODUCT.md) | [TECH](./feat-0013/TECH.md) | Implemented |
 | 0014 | Multilingual / language detection | [PRODUCT](./feat-0014/PRODUCT.md) | [TECH](./feat-0014/TECH.md) | Partial |
-| 0015 | Voice input (Whisper) | [PRODUCT](./feat-0015/PRODUCT.md) | [TECH](./feat-0015/TECH.md) | Partial / stub |
+| 0015 | Voice input (Whisper) | [PRODUCT](./feat-0015/PRODUCT.md) | [TECH](./feat-0015/TECH.md) | Implemented (see feat-0048) |
 | 0016 | Marketing landing | [PRODUCT](./feat-0016/PRODUCT.md) | [TECH](./feat-0016/TECH.md) | Implemented |
 | 0017 | Legal pages | [PRODUCT](./feat-0017/PRODUCT.md) | [TECH](./feat-0017/TECH.md) | Stub |
 | 0018 | SEO and PWA metadata | [PRODUCT](./feat-0018/PRODUCT.md) | [TECH](./feat-0018/TECH.md) | Implemented |
@@ -63,6 +63,7 @@ Each row links PRODUCT + TECH. Status reflects codebase as of spec authoring.
 | 0045 | Signup verification email delivery | [PRODUCT](./feat-0045/PRODUCT.md) | [TECH](./feat-0045/TECH.md) | Implemented |
 | 0046 | Core hardening + TruthSentry ops parity | [PRODUCT](./feat-0046/PRODUCT.md) | [TECH](./feat-0046/TECH.md) | Implemented |
 | 0047 | Single Vercel deploy (“one deploy”) | [PRODUCT](./feat-0047/PRODUCT.md) | [TECH](./feat-0047/TECH.md) | Done (1–3a) |
+| 0048 | Language experience (FR/EN chrome + claim prompts + voice) | [PRODUCT](./feat-0048/PRODUCT.md) | [TECH](./feat-0048/TECH.md) | Implemented |
 
 ## Critical path (core product)
 
@@ -94,6 +95,7 @@ feat-0033 (ops) + feat-0027 (env) + feat-0022 (DB)
 | [feat-0045](./feat-0045/PRODUCT.md) | Signup verification email delivery reliability |
 | [feat-0046](./feat-0046/PRODUCT.md) | Core loop hardening, admin resolve parity, port 3002 / migrate baseline |
 | [feat-0047](./feat-0047/PRODUCT.md) | One Vercel deploy: tRPC/webhooks/cron inside Next.js; retire standalone API |
+| [feat-0048](./feat-0048/PRODUCT.md) | Language experience: claim prompts, EN voice, no browser AI keys |
 | [feat-0030](./feat-0030/PRODUCT.md) | Verdicts, status machine, email trigger truth |
 | [feat-0031](./feat-0031/PRODUCT.md) | AI phases (replaces reading full AI_CHATBOT_SPEC for planning) |
 | [feat-0032](./feat-0032/PRODUCT.md) | Auto-scroll, copy, composer limits |

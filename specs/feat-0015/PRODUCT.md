@@ -18,11 +18,12 @@ Users may prefer speaking claims; typing in Peul/Fula can be difficult on some d
 
 ## Known limitations (product)
 
-1. Whisper called from **browser** with `NEXT_PUBLIC_OPENAI_API_KEY` — **security risk**.
-2. Language hardcoded **`fr`** in FormData, not `detectUserLanguage` or user preference.
+1. ~~Whisper from browser with `NEXT_PUBLIC_OPENAI_API_KEY`~~ — **fixed**: server `claim.transcribeAudio` + `AI_API_KEY` ([feat-0048](../feat-0048/PRODUCT.md)).
+2. ~~Language hardcoded `fr`~~ — **fixed**: UI locale when composer empty; Fula → auto-detect ([feat-0048](../feat-0048/PRODUCT.md)).
 3. Transcribed text is not auto-sent; user must submit.
 4. No audio attachment stored on claim.
 
 ## Related
 
 - [feat-0015 TECH](./TECH.md)
+- [feat-0048](../feat-0048/PRODUCT.md) language experience completion
