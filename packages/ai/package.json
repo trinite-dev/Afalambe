@@ -6,7 +6,8 @@
     "exports": {
         ".": "./src/index.ts",
         "./fact-check-details": "./src/format-fact-check-footer.ts",
-        "./intent": "./src/classify-message-intent.ts"
+        "./intent": "./src/classify-message-intent.ts",
+        "./claim-language": "./src/claim-language.ts"
     },
     "scripts": {
         "build": "tsc --noEmit",

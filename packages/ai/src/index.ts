@@ -38,3 +38,11 @@ export type {
     ClassifyMessageIntentInput,
     ClassifyMessageIntentResult,
 } from './classify-message-intent';
+export {
+    CLAIM_LANGUAGES,
+    getLanguageSystemPrompt,
+    LANGUAGE_SYSTEM_PROMPTS,
+    resolveClaimLanguage,
+    whisperLanguageHint,
+} from './claim-language';
+export type { ClaimLanguage } from './claim-language';
